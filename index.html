@@ -192,19 +192,65 @@
         color: #334155;
     }
 
-    .client-list {
-        overflow-y: auto;
-        flex: 1;
+    .selection-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    #contadorSeleccion {
+        font-weight: bold;
+        color: #4f46e5;
+    }
+
+    .link-btn {
+        background: none;
+        border: none;
+        color: #4f46e5;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+    }
+
+    .link-btn:hover {
+        color: #4338ca;
     }
 
     .client-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
         padding: 10px 12px;
         border-radius: 10px;
         margin-bottom: 8px;
         background: #f8fafc;
-        cursor: pointer;
         transition: background 0.15s;
         border: 1px solid transparent;
+    }
+
+    .client-item .select-checkbox {
+        margin-top: 3px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .client-item .info {
+        flex: 1;
+        cursor: pointer;
+    }
+
+    .client-list {
+        overflow-y: auto;
+        flex: 1;
     }
 
     .client-item:hover {
@@ -315,7 +361,7 @@
             <input type="file" id="inputCSV" accept=".csv,text/csv">
             <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML/KMZ (barrios)</button>
             <input type="file" id="inputKML" accept=".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/xml,text/xml,application/zip,application/octet-stream,*/*">
-            <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima</button>
+            <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima (seleccionados)</button>
             <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
             <div class="search-box">
                 <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre...">
@@ -353,7 +399,12 @@
     <div class="layout">
 
         <div class="panel">
-            <h2>📋 Clientes (ordenados por distancia)</h2>
+            <h2>📋 Clientes (marca los que quieres visitar)</h2>
+            <div class="selection-bar">
+                <span id="contadorSeleccion">0 seleccionados</span>
+                <button class="link-btn" id="btnSeleccionarTodos">Seleccionar visibles</button>
+                <button class="link-btn" id="btnLimpiarSeleccion">Limpiar selección</button>
+            </div>
             <div class="client-list" id="clientList">
                 <div class="empty-hint">
                     Carga un archivo CSV para ver la lista de clientes aquí.
@@ -427,6 +478,9 @@
     const btnCargarKML = document.getElementById("btnCargarKML");
     const inputKML = document.getElementById("inputKML");
     const btnRutaOptima = document.getElementById("btnRutaOptima");
+    const contadorSeleccionElement = document.getElementById("contadorSeleccion");
+    const btnSeleccionarTodos = document.getElementById("btnSeleccionarTodos");
+    const btnLimpiarSeleccion = document.getElementById("btnLimpiarSeleccion");
 
     btnCargarCSV.addEventListener("click", () => inputCSV.click());
     btnCargarKML.addEventListener("click", () => inputKML.click());
@@ -689,7 +743,8 @@
                 marker: null,
                 linea: null,
                 distancia: null,
-                ordenRuta: null
+                ordenRuta: null,
+                seleccionado: false
             };
 
             if (valido) {
@@ -1032,6 +1087,12 @@
     // necesitas algo más robusto, se puede migrar a OpenRouteService
     // (gratis con API key) o a un servidor OSRM propio.
 
+    // Cantidad mínima y máxima de clientes seleccionados para calcular ruta.
+    // El mínimo evita rutas sin sentido (1 solo punto); el máximo protege
+    // al servidor gratuito de OSRM, que no está pensado para cargas grandes.
+    const MIN_CLIENTES_RUTA = 2;
+    const MAX_CLIENTES_RUTA = 25;
+
     btnRutaOptima.addEventListener("click", calcularRutaOptima);
 
     async function calcularRutaOptima() {
@@ -1042,28 +1103,31 @@
             return;
         }
 
-        // Respeta el filtro de búsqueda si el usuario tiene uno activo.
-        const filtro = normalizarEncabezado(buscadorInput.value || "");
+        let objetivos = clientes.filter(c => c.valido && c.seleccionado);
 
-        const objetivos = clientes.filter(c =>
-            c.valido && normalizarEncabezado(c.nombre).includes(filtro)
-        );
-
-        if (objetivos.length === 0) {
-            statusElement.textContent = "⚠️ No hay clientes válidos para calcular una ruta.";
-            statusElement.className = "status warning";
-            return;
-        }
-
-        if (objetivos.length > 40) {
+        if (objetivos.length < MIN_CLIENTES_RUTA) {
             statusElement.textContent =
-                "⚠️ Hay demasiados clientes visibles (" + objetivos.length +
-                ") para el servidor gratuito. Usa el buscador para filtrar un grupo más pequeño (máx. ~40).";
+                `⚠️ Selecciona al menos ${MIN_CLIENTES_RUTA} clientes (marca la casilla ☐ en la lista) para calcular una ruta.`;
             statusElement.className = "status warning";
             return;
         }
 
-        statusElement.textContent = "🧭 Calculando ruta óptima...";
+        let mensajeReduccion = "";
+
+        if (objetivos.length > MAX_CLIENTES_RUTA) {
+
+            // Nos quedamos con los MAX_CLIENTES_RUTA más cercanos a tu posición
+            // (línea recta), para no sobrecargar el servidor gratuito de rutas.
+            objetivos = objetivos
+                .slice()
+                .sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity))
+                .slice(0, MAX_CLIENTES_RUTA);
+
+            mensajeReduccion =
+                ` (se redujo automáticamente a los ${MAX_CLIENTES_RUTA} clientes seleccionados más cercanos a ti)`;
+        }
+
+        statusElement.textContent = "🧭 Calculando ruta óptima..." + mensajeReduccion;
         statusElement.className = "status";
 
         // OSRM espera coordenadas como "lon,lat" separadas por ";".
@@ -1116,7 +1180,7 @@
             statusElement.textContent =
                 "✅ Ruta óptima calculada: " + objetivos.length + " paradas · " +
                 formatearDistancia(viaje.distance) + " · " +
-                formatearDuracion(viaje.duration);
+                formatearDuracion(viaje.duration) + mensajeReduccion;
 
             statusElement.className = "status success";
 
@@ -1228,10 +1292,15 @@
                         ? `🔢 Parada ${c.ordenRuta + 1} · `
                         : "";
 
+                const marcado = c.seleccionado ? "checked" : "";
+
                 return `
-                    <div class="client-item" data-nombre="${escapeHTML(c.nombre)}">
-                        <div class="name">👤 ${escapeHTML(c.nombre)}</div>
-                        <div class="dist">${numeroParada}${distTexto}</div>
+                    <div class="client-item">
+                        <input type="checkbox" class="select-checkbox" data-nombre="${escapeHTML(c.nombre)}" ${marcado}>
+                        <div class="info" data-nombre="${escapeHTML(c.nombre)}">
+                            <div class="name">👤 ${escapeHTML(c.nombre)}</div>
+                            <div class="dist">${numeroParada}${distTexto}</div>
+                        </div>
                     </div>
                 `;
 
@@ -1239,16 +1308,18 @@
 
                 return `
                     <div class="client-item invalid">
-                        <div class="name">⚠️ ${escapeHTML(c.nombre)}</div>
-                        <div class="dist invalid-text">Coordenadas inválidas</div>
+                        <div class="info">
+                            <div class="name">⚠️ ${escapeHTML(c.nombre)}</div>
+                            <div class="dist invalid-text">Coordenadas inválidas</div>
+                        </div>
                     </div>
                 `;
             }
 
         }).join("");
 
-        // Click en un cliente: centrar el mapa y abrir su popup.
-        clientListElement.querySelectorAll(".client-item[data-nombre]").forEach(item => {
+        // Click en el nombre/distancia: centrar el mapa y abrir su popup.
+        clientListElement.querySelectorAll(".info[data-nombre]").forEach(item => {
 
             item.addEventListener("click", () => {
 
@@ -1261,7 +1332,55 @@
                 }
             });
         });
+
+        // Checkbox: marcar/desmarcar cliente para la ruta.
+        clientListElement.querySelectorAll(".select-checkbox").forEach(checkbox => {
+
+            checkbox.addEventListener("change", () => {
+
+                const nombre = checkbox.getAttribute("data-nombre");
+                const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+
+                if (cliente) {
+                    cliente.seleccionado = checkbox.checked;
+                    actualizarContadorSeleccion();
+                }
+            });
+        });
+
+        actualizarContadorSeleccion();
     }
+
+    // ==========================================================
+    // CONTADOR Y ATAJOS DE SELECCIÓN
+    // ==========================================================
+
+    function actualizarContadorSeleccion() {
+
+        const total = clientes.filter(c => c.valido && c.seleccionado).length;
+
+        contadorSeleccionElement.textContent =
+            total === 1 ? "1 seleccionado" : total + " seleccionados";
+    }
+
+    btnSeleccionarTodos.addEventListener("click", () => {
+
+        const filtro = normalizarEncabezado(buscadorInput.value || "");
+
+        clientes.forEach(c => {
+            if (c.valido && normalizarEncabezado(c.nombre).includes(filtro)) {
+                c.seleccionado = true;
+            }
+        });
+
+        renderizarListaClientes();
+    });
+
+    btnLimpiarSeleccion.addEventListener("click", () => {
+
+        clientes.forEach(c => { c.seleccionado = false; });
+        renderizarListaClientes();
+    });
 
     buscadorInput.addEventListener("input", renderizarListaClientes);
 
