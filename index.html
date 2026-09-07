@@ -313,8 +313,8 @@
         <div class="toolbar">
             <button class="btn" id="btnCargarCSV">📂 Cargar CSV</button>
             <input type="file" id="inputCSV" accept=".csv,text/csv">
-            <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML (barrios)</button>
-            <input type="file" id="inputKML" accept=".kml">
+            <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML/KMZ (barrios)</button>
+            <input type="file" id="inputKML" accept=".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/xml,text/xml,application/zip,application/octet-stream,*/*">
             <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima</button>
             <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
             <div class="search-box">
@@ -375,6 +375,11 @@
 <!-- togeojson: convierte KML a GeoJSON para poder mostrarlo con Leaflet -->
 <script
     src="https://unpkg.com/togeojson@0.16.0/togeojson.js">
+</script>
+
+<!-- JSZip: permite leer archivos .kmz (que son un .kml comprimido en ZIP) -->
+<script
+    src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js">
 </script>
 
 <script>
@@ -744,6 +749,30 @@
 
         if (!archivo) return;
 
+        const nombreArchivo = archivo.name.toLowerCase();
+        const esKMZ = nombreArchivo.endsWith(".kmz");
+        const esKML = nombreArchivo.endsWith(".kml");
+
+        if (!esKMZ && !esKML) {
+            statusElement.textContent =
+                "❌ Selecciona un archivo con extensión .kml o .kmz (elegiste: " +
+                archivo.name + ").";
+            statusElement.className = "status error";
+            inputKML.value = "";
+            return;
+        }
+
+        if (esKMZ) {
+            cargarArchivoKMZ(archivo);
+        } else {
+            cargarArchivoKML(archivo);
+        }
+
+        inputKML.value = "";
+    });
+
+    function cargarArchivoKML(archivo) {
+
         const lector = new FileReader();
 
         lector.onload = (e) => {
@@ -756,9 +785,47 @@
         };
 
         lector.readAsText(archivo, "UTF-8");
+    }
 
-        inputKML.value = "";
-    });
+    async function cargarArchivoKMZ(archivo) {
+
+        if (typeof JSZip === "undefined") {
+            statusElement.textContent =
+                "❌ No se pudo cargar la librería para leer KMZ (revisa tu conexión a internet).";
+            statusElement.className = "status error";
+            return;
+        }
+
+        statusElement.textContent = "📦 Descomprimiendo archivo KMZ...";
+        statusElement.className = "status";
+
+        try {
+
+            const datosZip = await archivo.arrayBuffer();
+            const zip = await JSZip.loadAsync(datosZip);
+
+            // Un KMZ normalmente trae "doc.kml" en la raíz, pero puede tener
+            // otro nombre, así que buscamos el primer archivo .kml dentro.
+            const nombreKmlDentro = Object.keys(zip.files).find(nombre =>
+                nombre.toLowerCase().endsWith(".kml")
+            );
+
+            if (!nombreKmlDentro) {
+                throw new Error("El archivo KMZ no contiene ningún .kml dentro.");
+            }
+
+            const textoKML = await zip.files[nombreKmlDentro].async("string");
+
+            procesarKML(textoKML);
+
+        } catch (err) {
+
+            statusElement.textContent =
+                "❌ No se pudo abrir el archivo KMZ: " + err.message;
+
+            statusElement.className = "status error";
+        }
+    }
 
     function procesarKML(textoKML) {
 
@@ -794,13 +861,33 @@
             capaKML = null;
         }
 
+        // Paleta de colores para diferenciar cada barrio, aunque el KML/KMZ
+        // no traiga colores definidos. Se asigna uno por polígono, en orden,
+        // y se repite en ciclo si hay más barrios que colores en la lista.
+        const PALETA_BARRIOS = [
+            "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+            "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe",
+            "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000",
+            "#aaffc3", "#808000", "#ffd8b1", "#000075", "#a9a9a9",
+            "#e6ac00", "#008b8b", "#8b0000", "#556b2f", "#ff1493",
+            "#4682b4", "#b8860b", "#2e8b57"
+        ];
+
+        let indiceColorBarrio = 0;
+
         capaKML = L.geoJSON(geojson, {
 
-            style: {
-                color: "#0ea5e9",
-                weight: 2,
-                fillColor: "#0ea5e9",
-                fillOpacity: 0.08
+            style: (feature) => {
+
+                const color = PALETA_BARRIOS[indiceColorBarrio % PALETA_BARRIOS.length];
+                indiceColorBarrio++;
+
+                return {
+                    color: color,
+                    weight: 2,
+                    fillColor: color,
+                    fillOpacity: 0.25
+                };
             },
 
             onEachFeature: (feature, layer) => {
