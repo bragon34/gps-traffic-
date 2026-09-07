@@ -177,7 +177,7 @@
     }
 
     .layout.sidebar-collapsed {
-        grid-template-columns: 0 1fr;
+        grid-template-columns: 1fr;
         gap: 0;
     }
 
@@ -189,6 +189,7 @@
         position: relative;
         height: calc(100vh - 250px);
         min-height: 450px;
+        grid-column: -1;
     }
 
     .sidebar-toggle-btn {
