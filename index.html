@@ -86,6 +86,22 @@
         background: #e2e8f0;
     }
 
+    .btn.tracking-on {
+        background: #059669;
+    }
+
+    .btn.tracking-on:hover {
+        background: #047857;
+    }
+
+    .btn.tracking-off {
+        background: #94a3b8;
+    }
+
+    .btn.tracking-off:hover {
+        background: #64748b;
+    }
+
     input[type="file"] {
         display: none;
     }
@@ -296,6 +312,7 @@
         <div class="toolbar">
             <button class="btn" id="btnCargarCSV">📂 Cargar CSV</button>
             <input type="file" id="inputCSV" accept=".csv,text/csv">
+            <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
             <div class="search-box">
                 <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre...">
             </div>
@@ -367,6 +384,19 @@
     const LINE_COLOR = "#4f46e5";
 
     // ==========================================================
+    // AHORRO DE BATERÍA: pausa automática por inactividad
+    // ==========================================================
+
+    // Si te mueves menos de este umbral, se considera que "no estás en ruta".
+    const UMBRAL_MOVIMIENTO_METROS = 15;
+
+    // Tiempo sin movimiento significativo antes de pausar el GPS solo.
+    const TIEMPO_INACTIVIDAD_MS = 5 * 60 * 1000; // 5 minutos
+
+    // Cada cuánto se revisa si hay que pausar por inactividad.
+    const INTERVALO_REVISION_MS = 20 * 1000; // 20 segundos
+
+    // ==========================================================
     // ELEMENTOS DE LA INTERFAZ
     // ==========================================================
 
@@ -379,6 +409,7 @@
     const buscadorInput = document.getElementById("buscador");
     const btnCargarCSV = document.getElementById("btnCargarCSV");
     const inputCSV = document.getElementById("inputCSV");
+    const btnToggleGPS = document.getElementById("btnToggleGPS");
 
     btnCargarCSV.addEventListener("click", () => inputCSV.click());
 
@@ -409,6 +440,25 @@
     // Posición actual del usuario (null hasta que llegue el primer GPS).
     let userLat = null;
     let userLon = null;
+
+    // Id devuelto por watchPosition (para poder detenerlo con clearWatch).
+    let watchId = null;
+
+    // Indica si el seguimiento está activo (encendido por el usuario o al cargar).
+    let seguimientoActivo = true;
+
+    // Indica si el GPS está pausado automáticamente por inactividad
+    // (distinto de una pausa manual, para poder mostrar el mensaje correcto).
+    let pausadoPorInactividad = false;
+
+    // Última posición considerada "significativa" (para medir movimiento real).
+    let ultimaPosicionSignificativa = null;
+
+    // Marca de tiempo del último movimiento significativo detectado.
+    let ultimoMovimientoTS = Date.now();
+
+    // Intervalo que revisa periódicamente si hay que pausar por inactividad.
+    let intervaloInactividad = null;
 
     // ==========================================================
     // ESTADO DE CLIENTES
@@ -836,6 +886,31 @@
         userLat = latitude;
         userLon = longitude;
 
+        // ======================================================
+        // DETECCIÓN DE MOVIMIENTO REAL (para ahorro de batería)
+        // ======================================================
+
+        if (!ultimaPosicionSignificativa) {
+
+            ultimaPosicionSignificativa = { lat: latitude, lon: longitude };
+            ultimoMovimientoTS = Date.now();
+
+        } else {
+
+            const distanciaDesdeUltima = calcularDistanciaMetros(
+                ultimaPosicionSignificativa.lat,
+                ultimaPosicionSignificativa.lon,
+                latitude,
+                longitude
+            );
+
+            if (distanciaDesdeUltima >= UMBRAL_MOVIMIENTO_METROS) {
+                ultimaPosicionSignificativa = { lat: latitude, lon: longitude };
+                ultimoMovimientoTS = Date.now();
+                pausadoPorInactividad = false;
+            }
+        }
+
         // Mostrar coordenadas.
         latitudeElement.textContent = latitude.toFixed(7);
         longitudeElement.textContent = longitude.toFixed(7);
@@ -986,7 +1061,7 @@
          * ejecuta automáticamente updatePosition(), lo que actualiza
          * el marcador, las distancias y las líneas hacia cada cliente.
          */
-        navigator.geolocation.watchPosition(
+        watchId = navigator.geolocation.watchPosition(
             updatePosition,
             handleLocationError,
             {
@@ -995,7 +1070,90 @@
                 timeout: 15000
             }
         );
+
+        seguimientoActivo = true;
+        ultimoMovimientoTS = Date.now();
+
+        actualizarBotonToggle();
+
+        if (!intervaloInactividad) {
+            intervaloInactividad = setInterval(
+                revisarInactividad,
+                INTERVALO_REVISION_MS
+            );
+        }
     }
+
+    // ==========================================================
+    // PAUSAR / REANUDAR SEGUIMIENTO GPS
+    // ==========================================================
+
+    function pausarGPS(porInactividad) {
+
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+
+        seguimientoActivo = false;
+        pausadoPorInactividad = !!porInactividad;
+
+        actualizarBotonToggle();
+
+        if (porInactividad) {
+            statusElement.textContent =
+                "😴 GPS pausado automáticamente por inactividad (sin movimiento por " +
+                (TIEMPO_INACTIVIDAD_MS / 60000) +
+                " min). Presiona ▶️ Reanudar GPS cuando retomes la ruta.";
+        } else {
+            statusElement.textContent =
+                "⏸️ Seguimiento GPS pausado manualmente.";
+        }
+
+        statusElement.className = "status warning";
+    }
+
+    function reanudarGPS() {
+
+        pausadoPorInactividad = false;
+        ultimaPosicionSignificativa = null; // reiniciar referencia de movimiento
+        startGPS();
+
+        statusElement.textContent =
+            "🟢 GPS reanudado. Actualizando tu posición...";
+        statusElement.className = "status success";
+    }
+
+    function revisarInactividad() {
+
+        if (!seguimientoActivo) return;
+
+        const tiempoSinMovimiento = Date.now() - ultimoMovimientoTS;
+
+        if (tiempoSinMovimiento >= TIEMPO_INACTIVIDAD_MS) {
+            pausarGPS(true);
+        }
+    }
+
+    function actualizarBotonToggle() {
+
+        if (seguimientoActivo) {
+            btnToggleGPS.textContent = "⏸️ Pausar GPS";
+            btnToggleGPS.className = "btn tracking-on";
+        } else {
+            btnToggleGPS.textContent = "▶️ Reanudar GPS";
+            btnToggleGPS.className = "btn tracking-off";
+        }
+    }
+
+    btnToggleGPS.addEventListener("click", () => {
+
+        if (seguimientoActivo) {
+            pausarGPS(false);
+        } else {
+            reanudarGPS();
+        }
+    });
 
     // ==========================================================
     // INICIAR AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
