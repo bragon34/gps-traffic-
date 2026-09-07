@@ -749,42 +749,65 @@
 
         if (!archivo) return;
 
-        const nombreArchivo = archivo.name.toLowerCase();
-        const esKMZ = nombreArchivo.endsWith(".kmz");
-        const esKML = nombreArchivo.endsWith(".kml");
-
-        if (!esKMZ && !esKML) {
-            statusElement.textContent =
-                "❌ Selecciona un archivo con extensión .kml o .kmz (elegiste: " +
-                archivo.name + ").";
-            statusElement.className = "status error";
-            inputKML.value = "";
-            return;
-        }
-
-        if (esKMZ) {
-            cargarArchivoKMZ(archivo);
-        } else {
-            cargarArchivoKML(archivo);
-        }
+        detectarYCargarBarrios(archivo);
 
         inputKML.value = "";
     });
 
+    // ==========================================================
+    // DETECTAR SI EL ARCHIVO ES KMZ (ZIP) O KML (TEXTO XML)
+    // ==========================================================
+    //
+    // No confiamos en el nombre/extensión del archivo, porque algunas
+    // herramientas de conversión generan nombres raros (ej. terminan en
+    // ".xml" en vez de ".kml"). En su lugar, miramos los primeros bytes:
+    // un ZIP (KMZ) siempre empieza con la firma "PK". Si no es ZIP, se
+    // trata como texto y se intenta leer como KML directamente.
+
+    async function detectarYCargarBarrios(archivo) {
+
+        statusElement.textContent = "📄 Leyendo archivo de barrios...";
+        statusElement.className = "status";
+
+        try {
+
+            const primerosBytes = new Uint8Array(await archivo.slice(0, 4).arrayBuffer());
+            const esZIP = primerosBytes[0] === 0x50 && primerosBytes[1] === 0x4b; // "PK"
+
+            if (esZIP) {
+                await cargarArchivoKMZ(archivo);
+            } else {
+                await cargarArchivoKML(archivo);
+            }
+
+        } catch (err) {
+
+            statusElement.textContent =
+                "❌ No se pudo leer el archivo: " + err.message;
+
+            statusElement.className = "status error";
+        }
+    }
+
     function cargarArchivoKML(archivo) {
 
-        const lector = new FileReader();
+        return new Promise((resolve) => {
 
-        lector.onload = (e) => {
-            procesarKML(e.target.result);
-        };
+            const lector = new FileReader();
 
-        lector.onerror = () => {
-            statusElement.textContent = "❌ No se pudo leer el archivo KML.";
-            statusElement.className = "status error";
-        };
+            lector.onload = (e) => {
+                procesarKML(e.target.result);
+                resolve();
+            };
 
-        lector.readAsText(archivo, "UTF-8");
+            lector.onerror = () => {
+                statusElement.textContent = "❌ No se pudo leer el archivo KML.";
+                statusElement.className = "status error";
+                resolve();
+            };
+
+            lector.readAsText(archivo, "UTF-8");
+        });
     }
 
     async function cargarArchivoKMZ(archivo) {
@@ -811,7 +834,7 @@
             );
 
             if (!nombreKmlDentro) {
-                throw new Error("El archivo KMZ no contiene ningún .kml dentro.");
+                throw new Error("El archivo comprimido no contiene ningún .kml dentro.");
             }
 
             const textoKML = await zip.files[nombreKmlDentro].async("string");
