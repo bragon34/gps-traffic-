@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>Clientes + Mi ubicación GPS</title>
 
 <!-- Leaflet -->
@@ -312,6 +313,9 @@
         <div class="toolbar">
             <button class="btn" id="btnCargarCSV">📂 Cargar CSV</button>
             <input type="file" id="inputCSV" accept=".csv,text/csv">
+            <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML (barrios)</button>
+            <input type="file" id="inputKML" accept=".kml">
+            <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima</button>
             <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
             <div class="search-box">
                 <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre...">
@@ -368,6 +372,11 @@
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
+<!-- togeojson: convierte KML a GeoJSON para poder mostrarlo con Leaflet -->
+<script
+    src="https://unpkg.com/togeojson@0.16.0/togeojson.js">
+</script>
+
 <script>
 
     // ==========================================================
@@ -410,8 +419,12 @@
     const btnCargarCSV = document.getElementById("btnCargarCSV");
     const inputCSV = document.getElementById("inputCSV");
     const btnToggleGPS = document.getElementById("btnToggleGPS");
+    const btnCargarKML = document.getElementById("btnCargarKML");
+    const inputKML = document.getElementById("inputKML");
+    const btnRutaOptima = document.getElementById("btnRutaOptima");
 
     btnCargarCSV.addEventListener("click", () => inputCSV.click());
+    btnCargarKML.addEventListener("click", () => inputKML.click());
 
     // ==========================================================
     // CREAR MAPA
@@ -422,13 +435,33 @@
         DEFAULT_ZOOM
     );
 
-    // Mapa de OpenStreetMap.
-    L.tileLayer(
+    // Mapa de OpenStreetMap (calles).
+    const capaCalles = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         }
+    );
+
+    // Imágenes satelitales gratuitas (Esri), sin necesidad de API key.
+    const capaSatelite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+            maxZoom: 19,
+            attribution:
+                'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
+        }
+    );
+
+    // Capa por defecto al iniciar.
+    capaCalles.addTo(map);
+
+    // Control para alternar entre Calles y Satélite.
+    L.control.layers(
+        { "🗺️ Calles": capaCalles, "🛰️ Satélite": capaSatelite },
+        {},
+        { collapsed: false, position: "topright" }
     ).addTo(map);
 
     // Marcador de la posición del usuario.
@@ -464,8 +497,15 @@
     // ESTADO DE CLIENTES
     // ==========================================================
 
-    // Cada cliente: { nombre, lat, lon, valido, marker, linea, distancia }
+    // Cada cliente: { nombre, lat, lon, valido, marker, linea, distancia, ordenRuta }
     let clientes = [];
+
+    // Capa del KML de barrios cargado (se reemplaza si se carga otro).
+    let capaKML = null;
+
+    // Línea de la ruta óptima calculada (OSRM) y estado relacionado.
+    let lineaRutaOptima = null;
+    let rutaCalculada = false;
 
     // Icono distinto para los clientes (para diferenciarlos de "mi ubicación").
     const clienteIcon = L.icon({
@@ -581,6 +621,14 @@
         });
 
         clientes = [];
+
+        // Un nuevo CSV invalida cualquier ruta óptima calculada previamente.
+        if (lineaRutaOptima) {
+            map.removeLayer(lineaRutaOptima);
+            lineaRutaOptima = null;
+        }
+
+        rutaCalculada = false;
     }
 
     function procesarCSV(texto) {
@@ -635,7 +683,8 @@
                 valido,
                 marker: null,
                 linea: null,
-                distancia: null
+                distancia: null,
+                ordenRuta: null
             };
 
             if (valido) {
@@ -683,6 +732,102 @@
 
         actualizarDistanciasYLineas();
         renderizarListaClientes();
+    }
+
+    // ==========================================================
+    // CARGAR KML DE BARRIOS
+    // ==========================================================
+
+    inputKML.addEventListener("change", (evento) => {
+
+        const archivo = evento.target.files[0];
+
+        if (!archivo) return;
+
+        const lector = new FileReader();
+
+        lector.onload = (e) => {
+            procesarKML(e.target.result);
+        };
+
+        lector.onerror = () => {
+            statusElement.textContent = "❌ No se pudo leer el archivo KML.";
+            statusElement.className = "status error";
+        };
+
+        lector.readAsText(archivo, "UTF-8");
+
+        inputKML.value = "";
+    });
+
+    function procesarKML(textoKML) {
+
+        if (typeof toGeoJSON === "undefined") {
+            statusElement.textContent =
+                "❌ No se pudo cargar la librería para leer KML (revisa tu conexión a internet).";
+            statusElement.className = "status error";
+            return;
+        }
+
+        let geojson;
+
+        try {
+
+            const xml = new DOMParser().parseFromString(textoKML, "text/xml");
+
+            const errorParser = xml.querySelector("parsererror");
+            if (errorParser) {
+                throw new Error("El archivo KML no tiene un formato válido.");
+            }
+
+            geojson = toGeoJSON.kml(xml);
+
+        } catch (err) {
+            statusElement.textContent = "❌ El archivo KML no se pudo procesar: " + err.message;
+            statusElement.className = "status error";
+            return;
+        }
+
+        // Si ya había un KML cargado, se reemplaza.
+        if (capaKML) {
+            map.removeLayer(capaKML);
+            capaKML = null;
+        }
+
+        capaKML = L.geoJSON(geojson, {
+
+            style: {
+                color: "#0ea5e9",
+                weight: 2,
+                fillColor: "#0ea5e9",
+                fillOpacity: 0.08
+            },
+
+            onEachFeature: (feature, layer) => {
+
+                const nombreBarrio =
+                    (feature.properties && (feature.properties.name || feature.properties.Name)) ||
+                    "Barrio";
+
+                layer.bindPopup(`<b>🏘️ ${escapeHTML(nombreBarrio)}</b>`);
+            }
+
+        }).addTo(map);
+
+        // Los polígonos de barrios van detrás de los marcadores de clientes.
+        capaKML.bringToBack();
+
+        statusElement.textContent = "✅ Barrios (KML) cargados sobre el mapa.";
+        statusElement.className = "status success";
+
+        // Si no hay clientes cargados aún, encuadrar el mapa en los barrios.
+        if (clientes.filter(c => c.valido).length === 0) {
+            try {
+                map.fitBounds(capaKML.getBounds(), { padding: [40, 40] });
+            } catch (err) {
+                // Si el KML no tiene geometría con límites válidos, se ignora.
+            }
+        }
     }
 
     function escapeHTML(texto) {
@@ -750,6 +895,133 @@
         return (metros / 1000).toFixed(2) + " km";
     }
 
+    function formatearDuracion(segundos) {
+
+        const minutos = Math.round(segundos / 60);
+
+        if (minutos < 60) {
+            return minutos + " min";
+        }
+
+        const horas = Math.floor(minutos / 60);
+        const minRestantes = minutos % 60;
+
+        return horas + " h " + minRestantes + " min";
+    }
+
+    // ==========================================================
+    // RUTA ÓPTIMA (OSRM público, gratuito, sin API key)
+    // ==========================================================
+    //
+    // Usa el servicio de "trip" de OSRM (Traveling Salesman) para
+    // calcular el mejor orden de visita y una ruta que sigue calles
+    // reales, comenzando en tu posición GPS actual.
+    //
+    // Nota: router.project-osrm.org es un servidor DEMO público,
+    // pensado para uso personal / bajo volumen. Si más adelante
+    // necesitas algo más robusto, se puede migrar a OpenRouteService
+    // (gratis con API key) o a un servidor OSRM propio.
+
+    btnRutaOptima.addEventListener("click", calcularRutaOptima);
+
+    async function calcularRutaOptima() {
+
+        if (userLat === null || userLon === null) {
+            statusElement.textContent = "📡 Esperando señal GPS antes de calcular la ruta...";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        // Respeta el filtro de búsqueda si el usuario tiene uno activo.
+        const filtro = normalizarEncabezado(buscadorInput.value || "");
+
+        const objetivos = clientes.filter(c =>
+            c.valido && normalizarEncabezado(c.nombre).includes(filtro)
+        );
+
+        if (objetivos.length === 0) {
+            statusElement.textContent = "⚠️ No hay clientes válidos para calcular una ruta.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        if (objetivos.length > 40) {
+            statusElement.textContent =
+                "⚠️ Hay demasiados clientes visibles (" + objetivos.length +
+                ") para el servidor gratuito. Usa el buscador para filtrar un grupo más pequeño (máx. ~40).";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        statusElement.textContent = "🧭 Calculando ruta óptima...";
+        statusElement.className = "status";
+
+        // OSRM espera coordenadas como "lon,lat" separadas por ";".
+        const coordenadas = [[userLon, userLat], ...objetivos.map(c => [c.lon, c.lat])]
+            .map(par => par[0] + "," + par[1])
+            .join(";");
+
+        const url =
+            "https://router.project-osrm.org/trip/v1/driving/" + coordenadas +
+            "?source=first&roundtrip=false&geometries=geojson&overview=full";
+
+        try {
+
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos.code !== "Ok" || !datos.trips || datos.trips.length === 0) {
+                throw new Error(datos.message || "El servicio de rutas no devolvió una ruta válida.");
+            }
+
+            const viaje = datos.trips[0];
+
+            // Dibujar la ruta siguiendo calles reales.
+            const puntosRuta = viaje.geometry.coordinates.map(c => [c[1], c[0]]);
+
+            if (lineaRutaOptima) {
+                map.removeLayer(lineaRutaOptima);
+            }
+
+            lineaRutaOptima = L.polyline(puntosRuta, {
+                color: "#dc2626",
+                weight: 4,
+                opacity: 0.85
+            }).addTo(map);
+
+            map.fitBounds(lineaRutaOptima.getBounds(), { padding: [40, 40] });
+
+            // datos.waypoints está en el mismo orden que "coordenadas" (índice 0 = yo).
+            // waypoint_index indica la posición de cada punto dentro de la ruta óptima.
+            datos.waypoints.forEach((wp, indiceEntrada) => {
+
+                if (indiceEntrada === 0) return; // esa es tu posición, no un cliente
+
+                const cliente = objetivos[indiceEntrada - 1];
+                cliente.ordenRuta = wp.waypoint_index; // 0 = primera parada después de ti
+            });
+
+            rutaCalculada = true;
+
+            statusElement.textContent =
+                "✅ Ruta óptima calculada: " + objetivos.length + " paradas · " +
+                formatearDistancia(viaje.distance) + " · " +
+                formatearDuracion(viaje.duration);
+
+            statusElement.className = "status success";
+
+            renderizarListaClientes();
+
+        } catch (err) {
+
+            statusElement.textContent =
+                "❌ No se pudo calcular la ruta (servidor gratuito puede estar ocupado). " +
+                "Intenta de nuevo en unos segundos.";
+
+            statusElement.className = "status error";
+        }
+    }
+
     // ==========================================================
     // ACTUALIZAR DISTANCIAS Y LÍNEAS HACIA CADA CLIENTE
     // ==========================================================
@@ -808,10 +1080,16 @@
             normalizarEncabezado(c.nombre).includes(filtro)
         );
 
-        // Ordenar: válidos con distancia primero (ascendente), luego inválidos al final.
+        // Ordenar: si hay una ruta óptima calculada, por orden de visita;
+        // si no, por distancia en línea recta (ascendente). Inválidos al final.
         listaFiltrada = listaFiltrada.slice().sort((a, b) => {
 
             if (a.valido && b.valido) {
+
+                if (rutaCalculada && a.ordenRuta !== null && b.ordenRuta !== null) {
+                    return a.ordenRuta - b.ordenRuta;
+                }
+
                 return (a.distancia ?? Infinity) - (b.distancia ?? Infinity);
             }
 
@@ -835,10 +1113,15 @@
                     ? "📏 " + formatearDistancia(c.distancia)
                     : "📡 Esperando GPS...";
 
+                const numeroParada =
+                    rutaCalculada && c.ordenRuta !== null
+                        ? `🔢 Parada ${c.ordenRuta + 1} · `
+                        : "";
+
                 return `
                     <div class="client-item" data-nombre="${escapeHTML(c.nombre)}">
                         <div class="name">👤 ${escapeHTML(c.nombre)}</div>
-                        <div class="dist">${distTexto}</div>
+                        <div class="dist">${numeroParada}${distTexto}</div>
                     </div>
                 `;
 
