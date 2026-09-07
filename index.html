@@ -173,6 +173,80 @@
         display: grid;
         grid-template-columns: 340px 1fr;
         gap: 14px;
+        transition: grid-template-columns 0.2s ease;
+    }
+
+    .layout.sidebar-collapsed {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .layout.sidebar-collapsed .panel {
+        display: none;
+    }
+
+    .map-wrapper {
+        position: relative;
+        height: calc(100vh - 250px);
+        min-height: 450px;
+        grid-column: -1;
+    }
+
+    .sidebar-toggle-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: none;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-toggle-btn:hover {
+        background: #f1f5f9;
+    }
+
+    .client-item.visited {
+        opacity: 0.5;
+        background: #f1f5f9;
+    }
+
+    .client-item.visited .name {
+        text-decoration: line-through;
+    }
+
+    .client-item .btn-visitar {
+        border: none;
+        background: #ecfdf5;
+        color: #047857;
+        border-radius: 8px;
+        font-size: 12px;
+        padding: 6px 8px;
+        cursor: pointer;
+        flex-shrink: 0;
+        white-space: nowrap;
+        height: fit-content;
+    }
+
+    .client-item .btn-visitar:hover {
+        background: #d1fae5;
+    }
+
+    .client-item.visited .btn-visitar {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .client-item.visited .btn-visitar:hover {
+        background: #cbd5e1;
     }
 
     .panel {
@@ -287,8 +361,7 @@
 
     #map {
         width: 100%;
-        height: calc(100vh - 250px);
-        min-height: 450px;
+        height: 100%;
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
@@ -315,7 +388,7 @@
             min-height: 300px;
         }
 
-        #map {
+        .map-wrapper {
             height: 400px;
             min-height: 400px;
         }
@@ -362,6 +435,7 @@
             <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML/KMZ (barrios)</button>
             <input type="file" id="inputKML" accept=".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/xml,text/xml,application/zip,application/octet-stream,*/*">
             <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima (seleccionados)</button>
+            <button class="btn secondary" id="btnEliminarRuta">🗑️ Eliminar ruta</button>
             <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
             <div class="search-box">
                 <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre...">
@@ -396,14 +470,18 @@
 
     </div>
 
-    <div class="layout">
+    <div class="layout" id="layout">
 
-        <div class="panel">
+        <div class="panel" id="panel">
             <h2>📋 Clientes (marca los que quieres visitar)</h2>
             <div class="selection-bar">
                 <span id="contadorSeleccion">0 seleccionados</span>
                 <button class="link-btn" id="btnSeleccionarTodos">Seleccionar visibles</button>
                 <button class="link-btn" id="btnLimpiarSeleccion">Limpiar selección</button>
+            </div>
+            <div class="selection-bar">
+                <span id="contadorVisitados">0 visitados</span>
+                <button class="link-btn" id="btnRestaurarVisitados">↩️ Restaurar todos</button>
             </div>
             <div class="client-list" id="clientList">
                 <div class="empty-hint">
@@ -412,7 +490,10 @@
             </div>
         </div>
 
-        <div id="map"></div>
+        <div class="map-wrapper">
+            <button id="btnToggleSidebar" class="sidebar-toggle-btn" title="Mostrar/ocultar lista de clientes">◀</button>
+            <div id="map"></div>
+        </div>
 
     </div>
 
@@ -481,9 +562,29 @@
     const contadorSeleccionElement = document.getElementById("contadorSeleccion");
     const btnSeleccionarTodos = document.getElementById("btnSeleccionarTodos");
     const btnLimpiarSeleccion = document.getElementById("btnLimpiarSeleccion");
+    const btnEliminarRuta = document.getElementById("btnEliminarRuta");
+    const btnToggleSidebar = document.getElementById("btnToggleSidebar");
+    const layoutElement = document.getElementById("layout");
+    const contadorVisitadosElement = document.getElementById("contadorVisitados");
+    const btnRestaurarVisitados = document.getElementById("btnRestaurarVisitados");
 
     btnCargarCSV.addEventListener("click", () => inputCSV.click());
     btnCargarKML.addEventListener("click", () => inputKML.click());
+
+    // ==========================================================
+    // MOSTRAR / OCULTAR PANEL LATERAL DE CLIENTES
+    // ==========================================================
+
+    btnToggleSidebar.addEventListener("click", () => {
+
+        layoutElement.classList.toggle("sidebar-collapsed");
+
+        const colapsado = layoutElement.classList.contains("sidebar-collapsed");
+        btnToggleSidebar.textContent = colapsado ? "▶" : "◀";
+
+        // El mapa necesita recalcular su tamaño tras el cambio de ancho.
+        setTimeout(() => map.invalidateSize(), 220);
+    });
 
     // ==========================================================
     // CREAR MAPA
@@ -744,7 +845,8 @@
                 linea: null,
                 distancia: null,
                 ordenRuta: null,
-                seleccionado: false
+                seleccionado: false,
+                visitado: false
             };
 
             if (valido) {
@@ -1095,6 +1197,33 @@
 
     btnRutaOptima.addEventListener("click", calcularRutaOptima);
 
+    // ==========================================================
+    // ELIMINAR LA RUTA TRAZADA (para poder generar una nueva)
+    // ==========================================================
+
+    btnEliminarRuta.addEventListener("click", () => {
+
+        if (!rutaCalculada && !lineaRutaOptima) {
+            statusElement.textContent = "ℹ️ No hay ninguna ruta trazada todavía.";
+            statusElement.className = "status";
+            return;
+        }
+
+        if (lineaRutaOptima) {
+            map.removeLayer(lineaRutaOptima);
+            lineaRutaOptima = null;
+        }
+
+        clientes.forEach(c => { c.ordenRuta = null; });
+        rutaCalculada = false;
+
+        statusElement.textContent =
+            "🗑️ Ruta eliminada. Marca clientes y presiona \"Ruta óptima\" para generar una nueva.";
+        statusElement.className = "status";
+
+        renderizarListaClientes();
+    });
+
     async function calcularRutaOptima() {
 
         if (userLat === null || userLon === null) {
@@ -1103,7 +1232,7 @@
             return;
         }
 
-        let objetivos = clientes.filter(c => c.valido && c.seleccionado);
+        let objetivos = clientes.filter(c => c.valido && !c.visitado && c.seleccionado);
 
         if (objetivos.length < MIN_CLIENTES_RUTA) {
             statusElement.textContent =
@@ -1206,7 +1335,7 @@
 
         clientes.forEach(c => {
 
-            if (!c.valido) return;
+            if (!c.valido || c.visitado) return;
 
             c.distancia = calcularDistanciaMetros(userLat, userLon, c.lat, c.lon);
 
@@ -1222,10 +1351,20 @@
                 }).addTo(map);
 
             } else {
+
                 c.linea.setLatLngs(latlngs);
+
+                if (!map.hasLayer(c.linea)) {
+                    c.linea.addTo(map);
+                }
             }
 
             if (c.marker) {
+
+                if (!map.hasLayer(c.marker)) {
+                    c.marker.addTo(map);
+                }
+
                 c.marker.bindPopup(
                     `<b>👤 ${escapeHTML(c.nombre)}</b>` +
                     `Lat: ${c.lat.toFixed(7)}<br>` +
@@ -1254,11 +1393,22 @@
             normalizarEncabezado(c.nombre).includes(filtro)
         );
 
-        // Ordenar: si hay una ruta óptima calculada, por orden de visita;
-        // si no, por distancia en línea recta (ascendente). Inválidos al final.
+        // Ordenar: primero válidos no visitados (por ruta óptima o distancia),
+        // luego coordenadas inválidas, y al final los ya visitados.
         listaFiltrada = listaFiltrada.slice().sort((a, b) => {
 
-            if (a.valido && b.valido) {
+            const nivel = (c) => {
+                if (c.valido && !c.visitado) return 0;
+                if (!c.valido) return 1;
+                return 2; // valido && visitado
+            };
+
+            const nivelA = nivel(a);
+            const nivelB = nivel(b);
+
+            if (nivelA !== nivelB) return nivelA - nivelB;
+
+            if (nivelA === 0) {
 
                 if (rutaCalculada && a.ordenRuta !== null && b.ordenRuta !== null) {
                     return a.ordenRuta - b.ordenRuta;
@@ -1266,9 +1416,6 @@
 
                 return (a.distancia ?? Infinity) - (b.distancia ?? Infinity);
             }
-
-            if (a.valido && !b.valido) return -1;
-            if (!a.valido && b.valido) return 1;
 
             return 0;
         });
@@ -1281,7 +1428,7 @@
 
         clientListElement.innerHTML = listaFiltrada.map(c => {
 
-            if (c.valido) {
+            if (c.valido && !c.visitado) {
 
                 const distTexto = c.distancia !== null
                     ? "📏 " + formatearDistancia(c.distancia)
@@ -1301,6 +1448,19 @@
                             <div class="name">👤 ${escapeHTML(c.nombre)}</div>
                             <div class="dist">${numeroParada}${distTexto}</div>
                         </div>
+                        <button class="btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="visitar">✅ Visitado</button>
+                    </div>
+                `;
+
+            } else if (c.valido && c.visitado) {
+
+                return `
+                    <div class="client-item visited">
+                        <div class="info">
+                            <div class="name">👤 ${escapeHTML(c.nombre)}</div>
+                            <div class="dist">✅ Ya visitado</div>
+                        </div>
+                        <button class="btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="restaurar">↩️ Restaurar</button>
                     </div>
                 `;
 
@@ -1333,6 +1493,21 @@
             });
         });
 
+        // Botón "✅ Visitado" / "↩️ Restaurar".
+        clientListElement.querySelectorAll(".btn-visitar").forEach(boton => {
+
+            boton.addEventListener("click", () => {
+
+                const nombre = boton.getAttribute("data-nombre");
+                const accion = boton.getAttribute("data-accion");
+                const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+
+                if (cliente) {
+                    marcarVisitado(cliente, accion === "visitar");
+                }
+            });
+        });
+
         // Checkbox: marcar/desmarcar cliente para la ruta.
         clientListElement.querySelectorAll(".select-checkbox").forEach(checkbox => {
 
@@ -1349,6 +1524,7 @@
         });
 
         actualizarContadorSeleccion();
+        actualizarContadorVisitados();
     }
 
     // ==========================================================
@@ -1363,12 +1539,20 @@
             total === 1 ? "1 seleccionado" : total + " seleccionados";
     }
 
+    function actualizarContadorVisitados() {
+
+        const total = clientes.filter(c => c.valido && c.visitado).length;
+
+        contadorVisitadosElement.textContent =
+            total === 1 ? "1 visitado" : total + " visitados";
+    }
+
     btnSeleccionarTodos.addEventListener("click", () => {
 
         const filtro = normalizarEncabezado(buscadorInput.value || "");
 
         clientes.forEach(c => {
-            if (c.valido && normalizarEncabezado(c.nombre).includes(filtro)) {
+            if (c.valido && !c.visitado && normalizarEncabezado(c.nombre).includes(filtro)) {
                 c.seleccionado = true;
             }
         });
@@ -1380,6 +1564,50 @@
 
         clientes.forEach(c => { c.seleccionado = false; });
         renderizarListaClientes();
+    });
+
+    // ==========================================================
+    // MARCAR CLIENTES COMO VISITADOS (quitarlos del mapa sin tocar el CSV)
+    // ==========================================================
+
+    function marcarVisitado(cliente, visitado) {
+
+        cliente.visitado = visitado;
+
+        if (visitado) {
+
+            // El cliente ya fue visitado: se quita del mapa (marcador y línea),
+            // pero sigue existiendo en memoria por si se quiere restaurar.
+            cliente.seleccionado = false;
+
+            if (cliente.marker && map.hasLayer(cliente.marker)) {
+                map.removeLayer(cliente.marker);
+            }
+
+            if (cliente.linea && map.hasLayer(cliente.linea)) {
+                map.removeLayer(cliente.linea);
+            }
+
+        } else {
+
+            // Restaurar: se vuelve a mostrar en el mapa y se recalcula su línea/distancia.
+            if (cliente.marker && !map.hasLayer(cliente.marker)) {
+                cliente.marker.addTo(map);
+            }
+
+            actualizarDistanciasYLineas();
+        }
+
+        renderizarListaClientes();
+    }
+
+    btnRestaurarVisitados.addEventListener("click", () => {
+
+        clientes.forEach(c => {
+            if (c.valido && c.visitado) {
+                marcarVisitado(c, false);
+            }
+        });
     });
 
     buscadorInput.addEventListener("input", renderizarListaClientes);
