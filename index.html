@@ -44,3 +44,1866 @@
     .header h1 {
         font-size: 22px;
         margin-bottom: 8px;
+    }
+
+    .header p {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+        align-items: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.15s;
+    }
+
+    .btn:hover {
+        background: #4338ca;
+    }
+
+    .btn.secondary {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn.secondary:hover {
+        background: #e2e8f0;
+    }
+
+    .btn.tracking-on {
+        background: #059669;
+    }
+
+    .btn.tracking-on:hover {
+        background: #047857;
+    }
+
+    .btn.tracking-off {
+        background: #94a3b8;
+    }
+
+    .btn.tracking-off:hover {
+        background: #64748b;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-size: 14px;
+    }
+
+    .status {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #3730a3;
+        font-size: 14px;
+    }
+
+    .status.success {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status.error {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .status.warning {
+        background: #fffbeb;
+        color: #92400e;
+    }
+
+    .coordinates {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .coordinate {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .coordinate span {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .coordinate strong {
+        font-size: 15px;
+        word-break: break-all;
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 14px;
+        transition: grid-template-columns 0.2s ease;
+    }
+
+    .layout.sidebar-collapsed {
+        grid-template-columns: 0 1fr;
+        gap: 0;
+    }
+
+    .layout.sidebar-collapsed .panel {
+        display: none;
+    }
+
+    .map-wrapper {
+        position: relative;
+        height: calc(100vh - 250px);
+        min-height: 450px;
+    }
+
+    .sidebar-toggle-btn {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: none;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-toggle-btn:hover {
+        background: #f1f5f9;
+    }
+
+    .client-item.visited {
+        opacity: 0.5;
+        background: #f1f5f9;
+    }
+
+    .client-item.visited .name {
+        text-decoration: line-through;
+    }
+
+    .client-item .btn-visitar {
+        border: none;
+        background: #ecfdf5;
+        color: #047857;
+        border-radius: 8px;
+        font-size: 12px;
+        padding: 6px 8px;
+        cursor: pointer;
+        flex-shrink: 0;
+        white-space: nowrap;
+        height: fit-content;
+    }
+
+    .client-item .btn-visitar:hover {
+        background: #d1fae5;
+    }
+
+    .client-item.visited .btn-visitar {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .client-item.visited .btn-visitar:hover {
+        background: #cbd5e1;
+    }
+
+    .panel {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 250px);
+        min-height: 450px;
+    }
+
+    .panel h2 {
+        font-size: 15px;
+        margin-bottom: 10px;
+        color: #334155;
+    }
+
+    .selection-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    #contadorSeleccion {
+        font-weight: bold;
+        color: #4f46e5;
+    }
+
+    .link-btn {
+        background: none;
+        border: none;
+        color: #4f46e5;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+    }
+
+    .link-btn:hover {
+        color: #4338ca;
+    }
+
+    .client-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        background: #f8fafc;
+        transition: background 0.15s;
+        border: 1px solid transparent;
+    }
+
+    .client-item .select-checkbox {
+        margin-top: 3px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .client-item .info {
+        flex: 1;
+        cursor: pointer;
+    }
+
+    .client-list {
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .client-item:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+    }
+
+    .client-item .name {
+        font-weight: bold;
+        font-size: 14px;
+        color: #1f2937;
+    }
+
+    .client-item .dist {
+        font-size: 13px;
+        color: #4f46e5;
+        margin-top: 2px;
+    }
+
+    .client-item.invalid {
+        opacity: 0.55;
+    }
+
+    .client-item .dist.invalid-text {
+        color: #b91c1c;
+    }
+
+    .empty-hint {
+        color: #94a3b8;
+        font-size: 13px;
+        text-align: center;
+        padding: 30px 10px;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .accuracy {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .leaflet-popup-content b {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    @media (max-width: 900px) {
+        .layout {
+            grid-template-columns: 1fr;
+        }
+
+        .panel {
+            height: 300px;
+            min-height: 300px;
+        }
+
+        .map-wrapper {
+            height: 400px;
+            min-height: 400px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .app {
+            padding: 10px;
+        }
+
+        .header {
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 19px;
+        }
+
+        .coordinates {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="header">
+
+        <h1>📍 Clientes + Mi ubicación GPS</h1>
+
+        <p>
+            Carga un CSV con columnas <strong>Nombre, lat, lon</strong> (puede tener también una columna
+            "gps" intermedia, se ignora). Tu posición GPS se actualiza en tiempo real y se traza una
+            línea automática hacia cada cliente.
+        </p>
+
+        <div class="toolbar">
+            <button class="btn" id="btnCargarCSV">📂 Cargar CSV</button>
+            <input type="file" id="inputCSV" accept=".csv,text/csv">
+            <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML/KMZ (barrios)</button>
+            <input type="file" id="inputKML" accept=".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/xml,text/xml,application/zip,application/octet-stream,*/*">
+            <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima (seleccionados)</button>
+            <button class="btn secondary" id="btnEliminarRuta">🗑️ Eliminar ruta</button>
+            <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
+            <div class="search-box">
+                <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre...">
+            </div>
+        </div>
+
+        <div id="status" class="status">
+            📡 Solicitando permiso para acceder a tu ubicación...
+        </div>
+
+        <div class="coordinates">
+            <div class="coordinate">
+                <span>Latitud</span>
+                <strong id="latitude">Esperando GPS...</strong>
+            </div>
+
+            <div class="coordinate">
+                <span>Longitud</span>
+                <strong id="longitude">Esperando GPS...</strong>
+            </div>
+
+            <div class="coordinate">
+                <span>Clientes cargados</span>
+                <strong id="totalClientes">0</strong>
+            </div>
+        </div>
+
+        <div class="accuracy">
+            Precisión GPS:
+            <strong id="accuracy">--</strong>
+        </div>
+
+    </div>
+
+    <div class="layout" id="layout">
+
+        <div class="panel" id="panel">
+            <h2>📋 Clientes (marca los que quieres visitar)</h2>
+            <div class="selection-bar">
+                <span id="contadorSeleccion">0 seleccionados</span>
+                <button class="link-btn" id="btnSeleccionarTodos">Seleccionar visibles</button>
+                <button class="link-btn" id="btnLimpiarSeleccion">Limpiar selección</button>
+            </div>
+            <div class="selection-bar">
+                <span id="contadorVisitados">0 visitados</span>
+                <button class="link-btn" id="btnRestaurarVisitados">↩️ Restaurar todos</button>
+            </div>
+            <div class="client-list" id="clientList">
+                <div class="empty-hint">
+                    Carga un archivo CSV para ver la lista de clientes aquí.
+                </div>
+            </div>
+        </div>
+
+        <div class="map-wrapper">
+            <button id="btnToggleSidebar" class="sidebar-toggle-btn" title="Mostrar/ocultar lista de clientes">◀</button>
+            <div id="map"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Leaflet JavaScript -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<!-- togeojson: convierte KML a GeoJSON para poder mostrarlo con Leaflet -->
+<script
+    src="https://unpkg.com/togeojson@0.16.0/togeojson.js">
+</script>
+
+<!-- JSZip: permite leer archivos .kmz (que son un .kml comprimido en ZIP) -->
+<script
+    src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js">
+</script>
+
+<script>
+
+    // ==========================================================
+    // CONFIGURACIÓN
+    // ==========================================================
+
+    // Coordenadas utilizadas si el GPS falla o es rechazado.
+    // Madrid, España.
+    const DEFAULT_LAT = 40.4168;
+    const DEFAULT_LON = -3.7038;
+    const DEFAULT_ZOOM = 13;
+
+    // Color de las líneas de conexión hacia cada cliente.
+    const LINE_COLOR = "#4f46e5";
+
+    // ==========================================================
+    // AHORRO DE BATERÍA: pausa automática por inactividad
+    // ==========================================================
+
+    // Si te mueves menos de este umbral, se considera que "no estás en ruta".
+    const UMBRAL_MOVIMIENTO_METROS = 15;
+
+    // Tiempo sin movimiento significativo antes de pausar el GPS solo.
+    const TIEMPO_INACTIVIDAD_MS = 5 * 60 * 1000; // 5 minutos
+
+    // Cada cuánto se revisa si hay que pausar por inactividad.
+    const INTERVALO_REVISION_MS = 20 * 1000; // 20 segundos
+
+    // ==========================================================
+    // ELEMENTOS DE LA INTERFAZ
+    // ==========================================================
+
+    const statusElement = document.getElementById("status");
+    const latitudeElement = document.getElementById("latitude");
+    const longitudeElement = document.getElementById("longitude");
+    const accuracyElement = document.getElementById("accuracy");
+    const totalClientesElement = document.getElementById("totalClientes");
+    const clientListElement = document.getElementById("clientList");
+    const buscadorInput = document.getElementById("buscador");
+    const btnCargarCSV = document.getElementById("btnCargarCSV");
+    const inputCSV = document.getElementById("inputCSV");
+    const btnToggleGPS = document.getElementById("btnToggleGPS");
+    const btnCargarKML = document.getElementById("btnCargarKML");
+    const inputKML = document.getElementById("inputKML");
+    const btnRutaOptima = document.getElementById("btnRutaOptima");
+    const contadorSeleccionElement = document.getElementById("contadorSeleccion");
+    const btnSeleccionarTodos = document.getElementById("btnSeleccionarTodos");
+    const btnLimpiarSeleccion = document.getElementById("btnLimpiarSeleccion");
+    const btnEliminarRuta = document.getElementById("btnEliminarRuta");
+    const btnToggleSidebar = document.getElementById("btnToggleSidebar");
+    const layoutElement = document.getElementById("layout");
+    const contadorVisitadosElement = document.getElementById("contadorVisitados");
+    const btnRestaurarVisitados = document.getElementById("btnRestaurarVisitados");
+
+    btnCargarCSV.addEventListener("click", () => inputCSV.click());
+    btnCargarKML.addEventListener("click", () => inputKML.click());
+
+    // ==========================================================
+    // MOSTRAR / OCULTAR PANEL LATERAL DE CLIENTES
+    // ==========================================================
+
+    btnToggleSidebar.addEventListener("click", () => {
+
+        layoutElement.classList.toggle("sidebar-collapsed");
+
+        const colapsado = layoutElement.classList.contains("sidebar-collapsed");
+        btnToggleSidebar.textContent = colapsado ? "▶" : "◀";
+
+        // El mapa necesita recalcular su tamaño tras el cambio de ancho.
+        setTimeout(() => map.invalidateSize(), 220);
+    });
+
+    // ==========================================================
+    // CREAR MAPA
+    // ==========================================================
+
+    const map = L.map("map").setView(
+        [DEFAULT_LAT, DEFAULT_LON],
+        DEFAULT_ZOOM
+    );
+
+    // Mapa de OpenStreetMap (calles).
+    const capaCalles = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    );
+
+    // Imágenes satelitales gratuitas (Esri), sin necesidad de API key.
+    const capaSatelite = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+            maxZoom: 19,
+            attribution:
+                'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
+        }
+    );
+
+    // Capa por defecto al iniciar.
+    capaCalles.addTo(map);
+
+    // Control para alternar entre Calles y Satélite.
+    L.control.layers(
+        { "🗺️ Calles": capaCalles, "🛰️ Satélite": capaSatelite },
+        {},
+        { collapsed: false, position: "topright" }
+    ).addTo(map);
+
+    // Marcador de la posición del usuario.
+    let userMarker = null;
+
+    // Círculo que representa aproximadamente la precisión GPS.
+    let accuracyCircle = null;
+
+    // Posición actual del usuario (null hasta que llegue el primer GPS).
+    let userLat = null;
+    let userLon = null;
+
+    // Id devuelto por watchPosition (para poder detenerlo con clearWatch).
+    let watchId = null;
+
+    // Indica si el seguimiento está activo (encendido por el usuario o al cargar).
+    let seguimientoActivo = true;
+
+    // Indica si el GPS está pausado automáticamente por inactividad
+    // (distinto de una pausa manual, para poder mostrar el mensaje correcto).
+    let pausadoPorInactividad = false;
+
+    // Última posición considerada "significativa" (para medir movimiento real).
+    let ultimaPosicionSignificativa = null;
+
+    // Marca de tiempo del último movimiento significativo detectado.
+    let ultimoMovimientoTS = Date.now();
+
+    // Intervalo que revisa periódicamente si hay que pausar por inactividad.
+    let intervaloInactividad = null;
+
+    // ==========================================================
+    // ESTADO DE CLIENTES
+    // ==========================================================
+
+    // Cada cliente: { nombre, lat, lon, valido, marker, linea, distancia, ordenRuta }
+    let clientes = [];
+
+    // Capa del KML de barrios cargado (se reemplaza si se carga otro).
+    let capaKML = null;
+
+    // Línea de la ruta óptima calculada (OSRM) y estado relacionado.
+    let lineaRutaOptima = null;
+    let rutaCalculada = false;
+
+    // Icono distinto para los clientes (para diferenciarlos de "mi ubicación").
+    const clienteIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // ==========================================================
+    // PARSER DE CSV (soporta comillas, comas dentro de comillas)
+    // ==========================================================
+
+    function parseCSV(text) {
+
+        // Normalizamos saltos de línea.
+        text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
+        const rows = [];
+        let row = [];
+        let field = "";
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+
+            const char = text[i];
+
+            if (inQuotes) {
+
+                if (char === '"') {
+
+                    if (text[i + 1] === '"') {
+                        field += '"';
+                        i++;
+                    } else {
+                        inQuotes = false;
+                    }
+
+                } else {
+                    field += char;
+                }
+
+            } else {
+
+                if (char === '"') {
+                    inQuotes = true;
+                } else if (char === ",") {
+                    row.push(field);
+                    field = "";
+                } else if (char === "\n") {
+                    row.push(field);
+                    rows.push(row);
+                    row = [];
+                    field = "";
+                } else {
+                    field += char;
+                }
+            }
+        }
+
+        // Último campo / fila pendiente.
+        if (field.length > 0 || row.length > 0) {
+            row.push(field);
+            rows.push(row);
+        }
+
+        // Quitar filas totalmente vacías.
+        return rows.filter(r => r.some(c => c.trim() !== ""));
+    }
+
+    // ==========================================================
+    // LOCALIZAR COLUMNAS: Nombre, lat, lon (por encabezado, flexible)
+    // ==========================================================
+
+    function normalizarEncabezado(texto) {
+        return texto
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, ""); // quitar tildes
+    }
+
+    function encontrarIndicesColumnas(encabezado) {
+
+        const normalizados = encabezado.map(normalizarEncabezado);
+
+        let idxNombre = normalizados.findIndex(h =>
+            h === "nombre" || h.includes("nombre") || h === "cliente" || h.includes("cliente")
+        );
+
+        let idxLat = normalizados.findIndex(h =>
+            h === "lat" || h.includes("latitud") || h === "latitude"
+        );
+
+        let idxLon = normalizados.findIndex(h =>
+            h === "lon" || h.includes("longitud") || h === "longitude" || h === "lng"
+        );
+
+        return { idxNombre, idxLat, idxLon };
+    }
+
+    // ==========================================================
+    // CARGAR / REEMPLAZAR CLIENTES DESDE UN CSV
+    // ==========================================================
+
+    function limpiarClientesAnteriores() {
+
+        clientes.forEach(c => {
+            if (c.marker) map.removeLayer(c.marker);
+            if (c.linea) map.removeLayer(c.linea);
+        });
+
+        clientes = [];
+
+        // Un nuevo CSV invalida cualquier ruta óptima calculada previamente.
+        if (lineaRutaOptima) {
+            map.removeLayer(lineaRutaOptima);
+            lineaRutaOptima = null;
+        }
+
+        rutaCalculada = false;
+    }
+
+    function procesarCSV(texto) {
+
+        const filas = parseCSV(texto);
+
+        if (filas.length < 2) {
+            statusElement.textContent = "❌ El archivo CSV no tiene datos suficientes.";
+            statusElement.className = "status error";
+            return;
+        }
+
+        const encabezado = filas[0];
+        const { idxNombre, idxLat, idxLon } = encontrarIndicesColumnas(encabezado);
+
+        if (idxNombre === -1 || idxLat === -1 || idxLon === -1) {
+            statusElement.textContent =
+                "❌ No se encontraron columnas de Nombre / lat / lon en el CSV.";
+            statusElement.className = "status error";
+            return;
+        }
+
+        limpiarClientesAnteriores();
+
+        let invalidos = 0;
+
+        for (let i = 1; i < filas.length; i++) {
+
+            const fila = filas[i];
+
+            const nombre = (fila[idxNombre] || "").trim() || `Cliente ${i}`;
+            const latTexto = (fila[idxLat] || "").trim();
+            const lonTexto = (fila[idxLon] || "").trim();
+
+            const lat = parseFloat(latTexto);
+            const lon = parseFloat(lonTexto);
+
+            const valido =
+                latTexto !== "" &&
+                lonTexto !== "" &&
+                !isNaN(lat) &&
+                !isNaN(lon) &&
+                Math.abs(lat) <= 90 &&
+                Math.abs(lon) <= 180;
+
+            if (!valido) invalidos++;
+
+            const cliente = {
+                nombre,
+                lat: valido ? lat : null,
+                lon: valido ? lon : null,
+                valido,
+                marker: null,
+                linea: null,
+                distancia: null,
+                ordenRuta: null,
+                seleccionado: false,
+                visitado: false
+            };
+
+            if (valido) {
+
+                cliente.marker = L.marker([lat, lon], { icon: clienteIcon }).addTo(map);
+
+                cliente.marker.bindPopup(
+                    `<b>👤 ${escapeHTML(nombre)}</b>` +
+                    `Lat: ${lat.toFixed(7)}<br>` +
+                    `Lon: ${lon.toFixed(7)}`
+                );
+            }
+
+            clientes.push(cliente);
+        }
+
+        totalClientesElement.textContent = clientes.length;
+
+        const validos = clientes.filter(c => c.valido).length;
+
+        if (invalidos > 0) {
+            statusElement.textContent =
+                `✅ Se cargaron ${validos} clientes válidos. ⚠️ ${invalidos} fila(s) con coordenadas inválidas fueron omitidas del mapa.`;
+            statusElement.className = "status warning";
+        } else {
+            statusElement.textContent = `✅ Se cargaron ${validos} clientes correctamente.`;
+            statusElement.className = "status success";
+        }
+
+        // Ajustar el mapa para mostrar todos los puntos válidos.
+        const puntosValidos = clientes.filter(c => c.valido);
+
+        if (puntosValidos.length > 0) {
+
+            const bounds = L.latLngBounds(
+                puntosValidos.map(c => [c.lat, c.lon])
+            );
+
+            if (userLat !== null && userLon !== null) {
+                bounds.extend([userLat, userLon]);
+            }
+
+            map.fitBounds(bounds, { padding: [40, 40] });
+        }
+
+        actualizarDistanciasYLineas();
+        renderizarListaClientes();
+    }
+
+    // ==========================================================
+    // CARGAR KML DE BARRIOS
+    // ==========================================================
+
+    inputKML.addEventListener("change", (evento) => {
+
+        const archivo = evento.target.files[0];
+
+        if (!archivo) return;
+
+        detectarYCargarBarrios(archivo);
+
+        inputKML.value = "";
+    });
+
+    // ==========================================================
+    // DETECTAR SI EL ARCHIVO ES KMZ (ZIP) O KML (TEXTO XML)
+    // ==========================================================
+    //
+    // No confiamos en el nombre/extensión del archivo, porque algunas
+    // herramientas de conversión generan nombres raros (ej. terminan en
+    // ".xml" en vez de ".kml"). En su lugar, miramos los primeros bytes:
+    // un ZIP (KMZ) siempre empieza con la firma "PK". Si no es ZIP, se
+    // trata como texto y se intenta leer como KML directamente.
+
+    async function detectarYCargarBarrios(archivo) {
+
+        statusElement.textContent = "📄 Leyendo archivo de barrios...";
+        statusElement.className = "status";
+
+        try {
+
+            const primerosBytes = new Uint8Array(await archivo.slice(0, 4).arrayBuffer());
+            const esZIP = primerosBytes[0] === 0x50 && primerosBytes[1] === 0x4b; // "PK"
+
+            if (esZIP) {
+                await cargarArchivoKMZ(archivo);
+            } else {
+                await cargarArchivoKML(archivo);
+            }
+
+        } catch (err) {
+
+            statusElement.textContent =
+                "❌ No se pudo leer el archivo: " + err.message;
+
+            statusElement.className = "status error";
+        }
+    }
+
+    function cargarArchivoKML(archivo) {
+
+        return new Promise((resolve) => {
+
+            const lector = new FileReader();
+
+            lector.onload = (e) => {
+                procesarKML(e.target.result);
+                resolve();
+            };
+
+            lector.onerror = () => {
+                statusElement.textContent = "❌ No se pudo leer el archivo KML.";
+                statusElement.className = "status error";
+                resolve();
+            };
+
+            lector.readAsText(archivo, "UTF-8");
+        });
+    }
+
+    async function cargarArchivoKMZ(archivo) {
+
+        if (typeof JSZip === "undefined") {
+            statusElement.textContent =
+                "❌ No se pudo cargar la librería para leer KMZ (revisa tu conexión a internet).";
+            statusElement.className = "status error";
+            return;
+        }
+
+        statusElement.textContent = "📦 Descomprimiendo archivo KMZ...";
+        statusElement.className = "status";
+
+        try {
+
+            const datosZip = await archivo.arrayBuffer();
+            const zip = await JSZip.loadAsync(datosZip);
+
+            // Un KMZ normalmente trae "doc.kml" en la raíz, pero puede tener
+            // otro nombre, así que buscamos el primer archivo .kml dentro.
+            const nombreKmlDentro = Object.keys(zip.files).find(nombre =>
+                nombre.toLowerCase().endsWith(".kml")
+            );
+
+            if (!nombreKmlDentro) {
+                throw new Error("El archivo comprimido no contiene ningún .kml dentro.");
+            }
+
+            const textoKML = await zip.files[nombreKmlDentro].async("string");
+
+            procesarKML(textoKML);
+
+        } catch (err) {
+
+            statusElement.textContent =
+                "❌ No se pudo abrir el archivo KMZ: " + err.message;
+
+            statusElement.className = "status error";
+        }
+    }
+
+    function procesarKML(textoKML) {
+
+        if (typeof toGeoJSON === "undefined") {
+            statusElement.textContent =
+                "❌ No se pudo cargar la librería para leer KML (revisa tu conexión a internet).";
+            statusElement.className = "status error";
+            return;
+        }
+
+        let geojson;
+
+        try {
+
+            const xml = new DOMParser().parseFromString(textoKML, "text/xml");
+
+            const errorParser = xml.querySelector("parsererror");
+            if (errorParser) {
+                throw new Error("El archivo KML no tiene un formato válido.");
+            }
+
+            geojson = toGeoJSON.kml(xml);
+
+        } catch (err) {
+            statusElement.textContent = "❌ El archivo KML no se pudo procesar: " + err.message;
+            statusElement.className = "status error";
+            return;
+        }
+
+        // Si ya había un KML cargado, se reemplaza.
+        if (capaKML) {
+            map.removeLayer(capaKML);
+            capaKML = null;
+        }
+
+        // Paleta de colores para diferenciar cada barrio, aunque el KML/KMZ
+        // no traiga colores definidos. Se asigna uno por polígono, en orden,
+        // y se repite en ciclo si hay más barrios que colores en la lista.
+        const PALETA_BARRIOS = [
+            "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+            "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe",
+            "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000",
+            "#aaffc3", "#808000", "#ffd8b1", "#000075", "#a9a9a9",
+            "#e6ac00", "#008b8b", "#8b0000", "#556b2f", "#ff1493",
+            "#4682b4", "#b8860b", "#2e8b57"
+        ];
+
+        let indiceColorBarrio = 0;
+
+        capaKML = L.geoJSON(geojson, {
+
+            style: (feature) => {
+
+                const color = PALETA_BARRIOS[indiceColorBarrio % PALETA_BARRIOS.length];
+                indiceColorBarrio++;
+
+                return {
+                    color: color,
+                    weight: 2,
+                    fillColor: color,
+                    fillOpacity: 0.25
+                };
+            },
+
+            onEachFeature: (feature, layer) => {
+
+                const nombreBarrio =
+                    (feature.properties && (feature.properties.name || feature.properties.Name)) ||
+                    "Barrio";
+
+                layer.bindPopup(`<b>🏘️ ${escapeHTML(nombreBarrio)}</b>`);
+            }
+
+        }).addTo(map);
+
+        // Los polígonos de barrios van detrás de los marcadores de clientes.
+        capaKML.bringToBack();
+
+        statusElement.textContent = "✅ Barrios (KML) cargados sobre el mapa.";
+        statusElement.className = "status success";
+
+        // Si no hay clientes cargados aún, encuadrar el mapa en los barrios.
+        if (clientes.filter(c => c.valido).length === 0) {
+            try {
+                map.fitBounds(capaKML.getBounds(), { padding: [40, 40] });
+            } catch (err) {
+                // Si el KML no tiene geometría con límites válidos, se ignora.
+            }
+        }
+    }
+
+    function escapeHTML(texto) {
+        const div = document.createElement("div");
+        div.textContent = texto;
+        return div.innerHTML;
+    }
+
+    // ==========================================================
+    // EVENTO: SELECCIÓN DE ARCHIVO CSV
+    // ==========================================================
+
+    inputCSV.addEventListener("change", (evento) => {
+
+        const archivo = evento.target.files[0];
+
+        if (!archivo) return;
+
+        const lector = new FileReader();
+
+        lector.onload = (e) => {
+            procesarCSV(e.target.result);
+        };
+
+        lector.onerror = () => {
+            statusElement.textContent = "❌ No se pudo leer el archivo CSV.";
+            statusElement.className = "status error";
+        };
+
+        lector.readAsText(archivo, "UTF-8");
+
+        // Permitir volver a cargar el mismo archivo si se desea.
+        inputCSV.value = "";
+    });
+
+    // ==========================================================
+    // CÁLCULO DE DISTANCIA (fórmula de Haversine)
+    // ==========================================================
+
+    function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
+
+        const R = 6371000; // radio de la Tierra en metros
+
+        const rLat1 = lat1 * Math.PI / 180;
+        const rLat2 = lat2 * Math.PI / 180;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(rLat1) * Math.cos(rLat2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+
+    function formatearDistancia(metros) {
+
+        if (metros < 1000) {
+            return Math.round(metros) + " m";
+        }
+
+        return (metros / 1000).toFixed(2) + " km";
+    }
+
+    function formatearDuracion(segundos) {
+
+        const minutos = Math.round(segundos / 60);
+
+        if (minutos < 60) {
+            return minutos + " min";
+        }
+
+        const horas = Math.floor(minutos / 60);
+        const minRestantes = minutos % 60;
+
+        return horas + " h " + minRestantes + " min";
+    }
+
+    // ==========================================================
+    // RUTA ÓPTIMA (OSRM público, gratuito, sin API key)
+    // ==========================================================
+    //
+    // Usa el servicio de "trip" de OSRM (Traveling Salesman) para
+    // calcular el mejor orden de visita y una ruta que sigue calles
+    // reales, comenzando en tu posición GPS actual.
+    //
+    // Nota: router.project-osrm.org es un servidor DEMO público,
+    // pensado para uso personal / bajo volumen. Si más adelante
+    // necesitas algo más robusto, se puede migrar a OpenRouteService
+    // (gratis con API key) o a un servidor OSRM propio.
+
+    // Cantidad mínima y máxima de clientes seleccionados para calcular ruta.
+    // El mínimo evita rutas sin sentido (1 solo punto); el máximo protege
+    // al servidor gratuito de OSRM, que no está pensado para cargas grandes.
+    const MIN_CLIENTES_RUTA = 2;
+    const MAX_CLIENTES_RUTA = 25;
+
+    btnRutaOptima.addEventListener("click", calcularRutaOptima);
+
+    // ==========================================================
+    // ELIMINAR LA RUTA TRAZADA (para poder generar una nueva)
+    // ==========================================================
+
+    btnEliminarRuta.addEventListener("click", () => {
+
+        if (!rutaCalculada && !lineaRutaOptima) {
+            statusElement.textContent = "ℹ️ No hay ninguna ruta trazada todavía.";
+            statusElement.className = "status";
+            return;
+        }
+
+        if (lineaRutaOptima) {
+            map.removeLayer(lineaRutaOptima);
+            lineaRutaOptima = null;
+        }
+
+        clientes.forEach(c => { c.ordenRuta = null; });
+        rutaCalculada = false;
+
+        statusElement.textContent =
+            "🗑️ Ruta eliminada. Marca clientes y presiona \"Ruta óptima\" para generar una nueva.";
+        statusElement.className = "status";
+
+        renderizarListaClientes();
+    });
+
+    async function calcularRutaOptima() {
+
+        if (userLat === null || userLon === null) {
+            statusElement.textContent = "📡 Esperando señal GPS antes de calcular la ruta...";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        let objetivos = clientes.filter(c => c.valido && !c.visitado && c.seleccionado);
+
+        if (objetivos.length < MIN_CLIENTES_RUTA) {
+            statusElement.textContent =
+                `⚠️ Selecciona al menos ${MIN_CLIENTES_RUTA} clientes (marca la casilla ☐ en la lista) para calcular una ruta.`;
+            statusElement.className = "status warning";
+            return;
+        }
+
+        let mensajeReduccion = "";
+
+        if (objetivos.length > MAX_CLIENTES_RUTA) {
+
+            // Nos quedamos con los MAX_CLIENTES_RUTA más cercanos a tu posición
+            // (línea recta), para no sobrecargar el servidor gratuito de rutas.
+            objetivos = objetivos
+                .slice()
+                .sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity))
+                .slice(0, MAX_CLIENTES_RUTA);
+
+            mensajeReduccion =
+                ` (se redujo automáticamente a los ${MAX_CLIENTES_RUTA} clientes seleccionados más cercanos a ti)`;
+        }
+
+        statusElement.textContent = "🧭 Calculando ruta óptima..." + mensajeReduccion;
+        statusElement.className = "status";
+
+        // OSRM espera coordenadas como "lon,lat" separadas por ";".
+        const coordenadas = [[userLon, userLat], ...objetivos.map(c => [c.lon, c.lat])]
+            .map(par => par[0] + "," + par[1])
+            .join(";");
+
+        const url =
+            "https://router.project-osrm.org/trip/v1/driving/" + coordenadas +
+            "?source=first&roundtrip=false&geometries=geojson&overview=full";
+
+        try {
+
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos.code !== "Ok" || !datos.trips || datos.trips.length === 0) {
+                throw new Error(datos.message || "El servicio de rutas no devolvió una ruta válida.");
+            }
+
+            const viaje = datos.trips[0];
+
+            // Dibujar la ruta siguiendo calles reales.
+            const puntosRuta = viaje.geometry.coordinates.map(c => [c[1], c[0]]);
+
+            if (lineaRutaOptima) {
+                map.removeLayer(lineaRutaOptima);
+            }
+
+            lineaRutaOptima = L.polyline(puntosRuta, {
+                color: "#dc2626",
+                weight: 4,
+                opacity: 0.85
+            }).addTo(map);
+
+            map.fitBounds(lineaRutaOptima.getBounds(), { padding: [40, 40] });
+
+            // datos.waypoints está en el mismo orden que "coordenadas" (índice 0 = yo).
+            // waypoint_index indica la posición de cada punto dentro de la ruta óptima.
+            datos.waypoints.forEach((wp, indiceEntrada) => {
+
+                if (indiceEntrada === 0) return; // esa es tu posición, no un cliente
+
+                const cliente = objetivos[indiceEntrada - 1];
+                cliente.ordenRuta = wp.waypoint_index; // 0 = primera parada después de ti
+            });
+
+            rutaCalculada = true;
+
+            statusElement.textContent =
+                "✅ Ruta óptima calculada: " + objetivos.length + " paradas · " +
+                formatearDistancia(viaje.distance) + " · " +
+                formatearDuracion(viaje.duration) + mensajeReduccion;
+
+            statusElement.className = "status success";
+
+            renderizarListaClientes();
+
+        } catch (err) {
+
+            statusElement.textContent =
+                "❌ No se pudo calcular la ruta (servidor gratuito puede estar ocupado). " +
+                "Intenta de nuevo en unos segundos.";
+
+            statusElement.className = "status error";
+        }
+    }
+
+    // ==========================================================
+    // ACTUALIZAR DISTANCIAS Y LÍNEAS HACIA CADA CLIENTE
+    // ==========================================================
+
+    function actualizarDistanciasYLineas() {
+
+        if (userLat === null || userLon === null) return;
+
+        clientes.forEach(c => {
+
+            if (!c.valido || c.visitado) return;
+
+            c.distancia = calcularDistanciaMetros(userLat, userLon, c.lat, c.lon);
+
+            const latlngs = [[userLat, userLon], [c.lat, c.lon]];
+
+            if (!c.linea) {
+
+                c.linea = L.polyline(latlngs, {
+                    color: LINE_COLOR,
+                    weight: 2,
+                    opacity: 0.6,
+                    dashArray: "6, 6"
+                }).addTo(map);
+
+            } else {
+
+                c.linea.setLatLngs(latlngs);
+
+                if (!map.hasLayer(c.linea)) {
+                    c.linea.addTo(map);
+                }
+            }
+
+            if (c.marker) {
+
+                if (!map.hasLayer(c.marker)) {
+                    c.marker.addTo(map);
+                }
+
+                c.marker.bindPopup(
+                    `<b>👤 ${escapeHTML(c.nombre)}</b>` +
+                    `Lat: ${c.lat.toFixed(7)}<br>` +
+                    `Lon: ${c.lon.toFixed(7)}<br>` +
+                    `📏 Distancia: ${formatearDistancia(c.distancia)}`
+                );
+            }
+        });
+    }
+
+    // ==========================================================
+    // RENDERIZAR LISTA DE CLIENTES (ordenada por distancia + filtro)
+    // ==========================================================
+
+    function renderizarListaClientes() {
+
+        const filtro = normalizarEncabezado(buscadorInput.value || "");
+
+        if (clientes.length === 0) {
+            clientListElement.innerHTML =
+                '<div class="empty-hint">Carga un archivo CSV para ver la lista de clientes aquí.</div>';
+            return;
+        }
+
+        let listaFiltrada = clientes.filter(c =>
+            normalizarEncabezado(c.nombre).includes(filtro)
+        );
+
+        // Ordenar: primero válidos no visitados (por ruta óptima o distancia),
+        // luego coordenadas inválidas, y al final los ya visitados.
+        listaFiltrada = listaFiltrada.slice().sort((a, b) => {
+
+            const nivel = (c) => {
+                if (c.valido && !c.visitado) return 0;
+                if (!c.valido) return 1;
+                return 2; // valido && visitado
+            };
+
+            const nivelA = nivel(a);
+            const nivelB = nivel(b);
+
+            if (nivelA !== nivelB) return nivelA - nivelB;
+
+            if (nivelA === 0) {
+
+                if (rutaCalculada && a.ordenRuta !== null && b.ordenRuta !== null) {
+                    return a.ordenRuta - b.ordenRuta;
+                }
+
+                return (a.distancia ?? Infinity) - (b.distancia ?? Infinity);
+            }
+
+            return 0;
+        });
+
+        if (listaFiltrada.length === 0) {
+            clientListElement.innerHTML =
+                '<div class="empty-hint">No se encontraron clientes con ese nombre.</div>';
+            return;
+        }
+
+        clientListElement.innerHTML = listaFiltrada.map(c => {
+
+            if (c.valido && !c.visitado) {
+
+                const distTexto = c.distancia !== null
+                    ? "📏 " + formatearDistancia(c.distancia)
+                    : "📡 Esperando GPS...";
+
+                const numeroParada =
+                    rutaCalculada && c.ordenRuta !== null
+                        ? `🔢 Parada ${c.ordenRuta + 1} · `
+                        : "";
+
+                const marcado = c.seleccionado ? "checked" : "";
+
+                return `
+                    <div class="client-item">
+                        <input type="checkbox" class="select-checkbox" data-nombre="${escapeHTML(c.nombre)}" ${marcado}>
+                        <div class="info" data-nombre="${escapeHTML(c.nombre)}">
+                            <div class="name">👤 ${escapeHTML(c.nombre)}</div>
+                            <div class="dist">${numeroParada}${distTexto}</div>
+                        </div>
+                        <button class="btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="visitar">✅ Visitado</button>
+                    </div>
+                `;
+
+            } else if (c.valido && c.visitado) {
+
+                return `
+                    <div class="client-item visited">
+                        <div class="info">
+                            <div class="name">👤 ${escapeHTML(c.nombre)}</div>
+                            <div class="dist">✅ Ya visitado</div>
+                        </div>
+                        <button class="btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="restaurar">↩️ Restaurar</button>
+                    </div>
+                `;
+
+            } else {
+
+                return `
+                    <div class="client-item invalid">
+                        <div class="info">
+                            <div class="name">⚠️ ${escapeHTML(c.nombre)}</div>
+                            <div class="dist invalid-text">Coordenadas inválidas</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+        }).join("");
+
+        // Click en el nombre/distancia: centrar el mapa y abrir su popup.
+        clientListElement.querySelectorAll(".info[data-nombre]").forEach(item => {
+
+            item.addEventListener("click", () => {
+
+                const nombre = item.getAttribute("data-nombre");
+                const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+
+                if (cliente && cliente.marker) {
+                    map.setView([cliente.lat, cliente.lon], 18);
+                    cliente.marker.openPopup();
+                }
+            });
+        });
+
+        // Botón "✅ Visitado" / "↩️ Restaurar".
+        clientListElement.querySelectorAll(".btn-visitar").forEach(boton => {
+
+            boton.addEventListener("click", () => {
+
+                const nombre = boton.getAttribute("data-nombre");
+                const accion = boton.getAttribute("data-accion");
+                const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+
+                if (cliente) {
+                    marcarVisitado(cliente, accion === "visitar");
+                }
+            });
+        });
+
+        // Checkbox: marcar/desmarcar cliente para la ruta.
+        clientListElement.querySelectorAll(".select-checkbox").forEach(checkbox => {
+
+            checkbox.addEventListener("change", () => {
+
+                const nombre = checkbox.getAttribute("data-nombre");
+                const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+
+                if (cliente) {
+                    cliente.seleccionado = checkbox.checked;
+                    actualizarContadorSeleccion();
+                }
+            });
+        });
+
+        actualizarContadorSeleccion();
+        actualizarContadorVisitados();
+    }
+
+    // ==========================================================
+    // CONTADOR Y ATAJOS DE SELECCIÓN
+    // ==========================================================
+
+    function actualizarContadorSeleccion() {
+
+        const total = clientes.filter(c => c.valido && c.seleccionado).length;
+
+        contadorSeleccionElement.textContent =
+            total === 1 ? "1 seleccionado" : total + " seleccionados";
+    }
+
+    function actualizarContadorVisitados() {
+
+        const total = clientes.filter(c => c.valido && c.visitado).length;
+
+        contadorVisitadosElement.textContent =
+            total === 1 ? "1 visitado" : total + " visitados";
+    }
+
+    btnSeleccionarTodos.addEventListener("click", () => {
+
+        const filtro = normalizarEncabezado(buscadorInput.value || "");
+
+        clientes.forEach(c => {
+            if (c.valido && !c.visitado && normalizarEncabezado(c.nombre).includes(filtro)) {
+                c.seleccionado = true;
+            }
+        });
+
+        renderizarListaClientes();
+    });
+
+    btnLimpiarSeleccion.addEventListener("click", () => {
+
+        clientes.forEach(c => { c.seleccionado = false; });
+        renderizarListaClientes();
+    });
+
+    // ==========================================================
+    // MARCAR CLIENTES COMO VISITADOS (quitarlos del mapa sin tocar el CSV)
+    // ==========================================================
+
+    function marcarVisitado(cliente, visitado) {
+
+        cliente.visitado = visitado;
+
+        if (visitado) {
+
+            // El cliente ya fue visitado: se quita del mapa (marcador y línea),
+            // pero sigue existiendo en memoria por si se quiere restaurar.
+            cliente.seleccionado = false;
+
+            if (cliente.marker && map.hasLayer(cliente.marker)) {
+                map.removeLayer(cliente.marker);
+            }
+
+            if (cliente.linea && map.hasLayer(cliente.linea)) {
+                map.removeLayer(cliente.linea);
+            }
+
+        } else {
+
+            // Restaurar: se vuelve a mostrar en el mapa y se recalcula su línea/distancia.
+            if (cliente.marker && !map.hasLayer(cliente.marker)) {
+                cliente.marker.addTo(map);
+            }
+
+            actualizarDistanciasYLineas();
+        }
+
+        renderizarListaClientes();
+    }
+
+    btnRestaurarVisitados.addEventListener("click", () => {
+
+        clientes.forEach(c => {
+            if (c.valido && c.visitado) {
+                marcarVisitado(c, false);
+            }
+        });
+    });
+
+    buscadorInput.addEventListener("input", renderizarListaClientes);
+
+    // ==========================================================
+    // MOSTRAR POSICIÓN DEL USUARIO
+    // ==========================================================
+
+    function updatePosition(position) {
+
+        // AQUÍ SE CAPTURA LA UBICACIÓN GPS DEL NAVEGADOR.
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const accuracy = position.coords.accuracy;
+
+        userLat = latitude;
+        userLon = longitude;
+
+        // ======================================================
+        // DETECCIÓN DE MOVIMIENTO REAL (para ahorro de batería)
+        // ======================================================
+
+        if (!ultimaPosicionSignificativa) {
+
+            ultimaPosicionSignificativa = { lat: latitude, lon: longitude };
+            ultimoMovimientoTS = Date.now();
+
+        } else {
+
+            const distanciaDesdeUltima = calcularDistanciaMetros(
+                ultimaPosicionSignificativa.lat,
+                ultimaPosicionSignificativa.lon,
+                latitude,
+                longitude
+            );
+
+            if (distanciaDesdeUltima >= UMBRAL_MOVIMIENTO_METROS) {
+                ultimaPosicionSignificativa = { lat: latitude, lon: longitude };
+                ultimoMovimientoTS = Date.now();
+                pausadoPorInactividad = false;
+            }
+        }
+
+        // Mostrar coordenadas.
+        latitudeElement.textContent = latitude.toFixed(7);
+        longitudeElement.textContent = longitude.toFixed(7);
+
+        accuracyElement.textContent =
+            Math.round(accuracy) + " metros";
+
+        if (clientes.length === 0) {
+            statusElement.textContent =
+                "🟢 GPS activo. Carga un CSV para ver tus clientes en el mapa.";
+            statusElement.className = "status success";
+        }
+
+        // ======================================================
+        // CREAR O MOVER MARCADOR
+        // ======================================================
+
+        if (!userMarker) {
+
+            userMarker = L.marker(
+                [latitude, longitude]
+            ).addTo(map);
+
+            userMarker.bindPopup(
+                "<strong>📍 Tu ubicación</strong><br>" +
+                "Lat: " + latitude.toFixed(7) + "<br>" +
+                "Lon: " + longitude.toFixed(7)
+            );
+
+            // Si aún no hay clientes cargados, centramos en el usuario.
+            if (clientes.length === 0) {
+                map.setView([latitude, longitude], 17);
+            }
+
+        } else {
+
+            userMarker.setLatLng([
+                latitude,
+                longitude
+            ]);
+
+            userMarker.setPopupContent(
+                "<strong>📍 Tu ubicación</strong><br>" +
+                "Lat: " + latitude.toFixed(7) + "<br>" +
+                "Lon: " + longitude.toFixed(7)
+            );
+        }
+
+        // ======================================================
+        // CÍRCULO DE PRECISIÓN GPS
+        // ======================================================
+
+        if (!accuracyCircle) {
+
+            accuracyCircle = L.circle(
+                [latitude, longitude],
+                {
+                    radius: accuracy,
+                    weight: 1,
+                    fillOpacity: 0.12
+                }
+            ).addTo(map);
+
+        } else {
+
+            accuracyCircle.setLatLng([
+                latitude,
+                longitude
+            ]);
+
+            accuracyCircle.setRadius(accuracy);
+        }
+
+        // ======================================================
+        // ACTUALIZAR DISTANCIAS, LÍNEAS Y LISTA
+        // ======================================================
+
+        actualizarDistanciasYLineas();
+        renderizarListaClientes();
+    }
+
+    // ==========================================================
+    // ERROR DE GPS
+    // ==========================================================
+
+    function handleLocationError(error) {
+
+        let message = "";
+
+        switch (error.code) {
+
+            case error.PERMISSION_DENIED:
+                message =
+                    "❌ No se permitió el acceso a la ubicación. " +
+                    "Debes autorizar el GPS para utilizar esta función.";
+                break;
+
+            case error.POSITION_UNAVAILABLE:
+                message =
+                    "⚠️ No fue posible obtener tu ubicación. " +
+                    "Comprueba que el GPS esté activado.";
+                break;
+
+            case error.TIMEOUT:
+                message =
+                    "⏱️ El GPS tardó demasiado en responder. " +
+                    "Intentaremos obtener tu posición nuevamente.";
+                break;
+
+            default:
+                message =
+                    "⚠️ Ocurrió un error al obtener tu ubicación.";
+        }
+
+        statusElement.textContent = message;
+        statusElement.className = "status error";
+
+        // Mostrar mapa por defecto si no hay clientes cargados aún.
+        if (clientes.length === 0) {
+            map.setView(
+                [DEFAULT_LAT, DEFAULT_LON],
+                DEFAULT_ZOOM
+            );
+        }
+    }
+
+    // ==========================================================
+    // INICIAR GPS
+    // ==========================================================
+
+    function startGPS() {
+
+        // Comprobar si el navegador soporta Geolocation API.
+        if (!navigator.geolocation) {
+
+            statusElement.textContent =
+                "❌ Tu navegador no soporta geolocalización.";
+
+            statusElement.className = "status error";
+
+            return;
+        }
+
+        /*
+         * watchPosition mantiene una conexión con el GPS.
+         *
+         * Cada vez que el teléfono detecta una nueva posición,
+         * ejecuta automáticamente updatePosition(), lo que actualiza
+         * el marcador, las distancias y las líneas hacia cada cliente.
+         */
+        watchId = navigator.geolocation.watchPosition(
+            updatePosition,
+            handleLocationError,
+            {
+                enableHighAccuracy: true,
+                maximumAge: 1000,
+                timeout: 15000
+            }
+        );
+
+        seguimientoActivo = true;
+        ultimoMovimientoTS = Date.now();
+
+        actualizarBotonToggle();
+
+        if (!intervaloInactividad) {
+            intervaloInactividad = setInterval(
+                revisarInactividad,
+                INTERVALO_REVISION_MS
+            );
+        }
+    }
+
+    // ==========================================================
+    // PAUSAR / REANUDAR SEGUIMIENTO GPS
+    // ==========================================================
+
+    function pausarGPS(porInactividad) {
+
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+
+        seguimientoActivo = false;
+        pausadoPorInactividad = !!porInactividad;
+
+        actualizarBotonToggle();
+
+        if (porInactividad) {
+            statusElement.textContent =
+                "😴 GPS pausado automáticamente por inactividad (sin movimiento por " +
+                (TIEMPO_INACTIVIDAD_MS / 60000) +
+                " min). Presiona ▶️ Reanudar GPS cuando retomes la ruta.";
+        } else {
+            statusElement.textContent =
+                "⏸️ Seguimiento GPS pausado manualmente.";
+        }
+
+        statusElement.className = "status warning";
+    }
+
+    function reanudarGPS() {
+
+        pausadoPorInactividad = false;
+        ultimaPosicionSignificativa = null; // reiniciar referencia de movimiento
+        startGPS();
+
+        statusElement.textContent =
+            "🟢 GPS reanudado. Actualizando tu posición...";
+        statusElement.className = "status success";
+    }
+
+    function revisarInactividad() {
+
+        if (!seguimientoActivo) return;
+
+        const tiempoSinMovimiento = Date.now() - ultimoMovimientoTS;
+
+        if (tiempoSinMovimiento >= TIEMPO_INACTIVIDAD_MS) {
+            pausarGPS(true);
+        }
+    }
+
+    function actualizarBotonToggle() {
+
+        if (seguimientoActivo) {
+            btnToggleGPS.textContent = "⏸️ Pausar GPS";
+            btnToggleGPS.className = "btn tracking-on";
+        } else {
+            btnToggleGPS.textContent = "▶️ Reanudar GPS";
+            btnToggleGPS.className = "btn tracking-off";
+        }
+    }
+
+    btnToggleGPS.addEventListener("click", () => {
+
+        if (seguimientoActivo) {
+            pausarGPS(false);
+        } else {
+            reanudarGPS();
+        }
+    });
+
+    // ==========================================================
+    // INICIAR AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
+    // ==========================================================
+
+    window.addEventListener(
+        "load",
+        startGPS
+    );
+
+</script>
+
+</body>
+</html>
