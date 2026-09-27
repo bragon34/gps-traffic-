@@ -173,81 +173,6 @@
         display: grid;
         grid-template-columns: 340px 1fr;
         gap: 14px;
-        transition: grid-template-columns 0.2s ease;
-    }
-
-    .layout.sidebar-collapsed {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .layout.sidebar-collapsed .panel {
-        display: none;
-    }
-
-    .map-wrapper {
-        position: relative;
-        height: calc(100vh - 250px);
-        min-height: 450px;
-        min-width: 0;
-        width: 100%;
-    }
-
-    .sidebar-toggle-btn {
-        position: absolute;
-        top: 14px;
-        left: 14px;
-        z-index: 1000;
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        border: none;
-        background: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        font-size: 16px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .sidebar-toggle-btn:hover {
-        background: #f1f5f9;
-    }
-
-    .client-item.visited {
-        opacity: 0.5;
-        background: #f1f5f9;
-    }
-
-    .client-item.visited .name {
-        text-decoration: line-through;
-    }
-
-    .client-item .btn-visitar {
-        border: none;
-        background: #ecfdf5;
-        color: #047857;
-        border-radius: 8px;
-        font-size: 12px;
-        padding: 6px 8px;
-        cursor: pointer;
-        flex-shrink: 0;
-        white-space: nowrap;
-        height: fit-content;
-    }
-
-    .client-item .btn-visitar:hover {
-        background: #d1fae5;
-    }
-
-    .client-item.visited .btn-visitar {
-        background: #e2e8f0;
-        color: #475569;
-    }
-
-    .client-item.visited .btn-visitar:hover {
-        background: #cbd5e1;
     }
 
     .panel {
@@ -267,65 +192,19 @@
         color: #334155;
     }
 
-    .selection-bar {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        font-size: 12px;
-        color: #64748b;
-        margin-bottom: 8px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    #contadorSeleccion {
-        font-weight: bold;
-        color: #4f46e5;
-    }
-
-    .link-btn {
-        background: none;
-        border: none;
-        color: #4f46e5;
-        font-size: 12px;
-        cursor: pointer;
-        text-decoration: underline;
-        padding: 0;
-    }
-
-    .link-btn:hover {
-        color: #4338ca;
+    .client-list {
+        overflow-y: auto;
+        flex: 1;
     }
 
     .client-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
         padding: 10px 12px;
         border-radius: 10px;
         margin-bottom: 8px;
         background: #f8fafc;
+        cursor: pointer;
         transition: background 0.15s;
         border: 1px solid transparent;
-    }
-
-    .client-item .select-checkbox {
-        margin-top: 3px;
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-        cursor: pointer;
-    }
-
-    .client-item .info {
-        flex: 1;
-        cursor: pointer;
-    }
-
-    .client-list {
-        overflow-y: auto;
-        flex: 1;
     }
 
     .client-item:hover {
@@ -353,6 +232,54 @@
         color: #b91c1c;
     }
 
+    .client-item.visitado {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+    }
+
+    .client-item.visitado .name {
+        text-decoration: line-through;
+        color: #6b7280;
+    }
+
+    .client-item.visitado .dist {
+        color: #16a34a;
+    }
+
+    .client-actions {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-mini {
+        border: none;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .btn-visitar {
+        background: #4f46e5;
+        color: white;
+    }
+
+    .btn-visitar:hover {
+        background: #4338ca;
+    }
+
+    .btn-deshacer {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-deshacer:hover {
+        background: #e2e8f0;
+    }
+
     .empty-hint {
         color: #94a3b8;
         font-size: 13px;
@@ -362,7 +289,8 @@
 
     #map {
         width: 100%;
-        height: 100%;
+        height: calc(100vh - 250px);
+        min-height: 450px;
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
@@ -379,6 +307,435 @@
         margin-bottom: 4px;
     }
 
+    /* ---------- Rutas serpentina ---------- */
+
+    .serp-config {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #475569;
+    }
+
+    .serp-config label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .serp-config select {
+        padding: 6px 8px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 13px;
+        max-width: 100%;
+    }
+
+    .serp-config input[type="number"] {
+        width: 80px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 13px;
+    }
+
+    .rutas-resumen {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .ruta-chip {
+        border: 1px solid #e2e8f0;
+        border-left: 6px solid var(--c);
+        border-radius: 10px;
+        padding: 8px 10px;
+        background: #f8fafc;
+        font-size: 13px;
+    }
+
+    .ruta-chip strong {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+
+    .ruta-chip .ruta-acciones {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+    }
+
+    .num-icon div {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid var(--c);
+        font: bold 11px/18px Arial, sans-serif;
+        text-align: center;
+        color: #111827;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    }
+
+    .num-icon.visitado div {
+        background: #dcfce7;
+        opacity: 0.7;
+    }
+
+    .grupo-ruta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        margin: 10px 0 6px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        border-left: 6px solid var(--c);
+        cursor: pointer;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        user-select: none;
+    }
+
+    .grupo-ruta:first-child {
+        margin-top: 0;
+    }
+
+    .grupo-ruta .titulo {
+        flex: 1;
+        font-weight: bold;
+        font-size: 13px;
+        color: #1f2937;
+    }
+
+    .grupo-ruta .conteo {
+        font-size: 12px;
+        color: #64748b;
+        white-space: nowrap;
+    }
+
+    .grupo-ruta button {
+        border: none;
+        background: white;
+        border-radius: 6px;
+        padding: 4px 7px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .grupo-ruta button:hover {
+        background: #e2e8f0;
+    }
+
+    .grupo-ruta.oculta {
+        opacity: 0.55;
+        background: #f8fafc;
+    }
+
+    .client-item.en-ruta {
+        border-left: 4px solid var(--c);
+    }
+
+    .barra-lista-rutas {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+    }
+
+    .ruta-chip.oculta {
+        opacity: 0.55;
+    }
+
+    /* ---------- Mapa ampliado (pantalla completa) ---------- */
+
+    .btn-ampliar-mapa {
+        position: absolute;
+        left: 50%;
+        bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 52px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 999px;
+        background: #4f46e5;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-ampliar-mapa:hover {
+        background: #4338ca;
+    }
+
+    .btn-ampliar-mapa:active {
+        transform: translateX(-50%) scale(0.97);
+    }
+
+    .btn-ampliar-mapa .icono {
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    body.mapa-ampliado {
+        overflow: hidden;
+    }
+
+    body.mapa-ampliado .header,
+    body.mapa-ampliado .panel {
+        display: none;
+    }
+
+    body.mapa-ampliado #map {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        border-radius: 0;
+        z-index: 2000;
+    }
+
+    body.mapa-ampliado .btn-ampliar-mapa {
+        background: #0f172a;
+    }
+
+    /* ---------- Trazos dibujados a mano ---------- */
+
+    .btn.btn-sm {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .trazos-box {
+        margin-top: 12px;
+        border: 1px dashed #c7d2fe;
+        border-radius: 12px;
+        padding: 10px;
+        background: #fafaff;
+    }
+
+    .trazos-barra {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .trazos-titulo {
+        font-size: 14px;
+        margin-right: 4px;
+    }
+
+    .trazos-tol {
+        font-size: 13px;
+        color: #475569;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .trazos-tol input,
+    .trazos-select {
+        padding: 7px 8px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 13px;
+        background: white;
+    }
+
+    .trazos-tol input {
+        width: 70px;
+    }
+
+    .trazos-select {
+        max-width: 100%;
+    }
+
+    .lista-trazos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .trazos-vacio {
+        font-size: 13px;
+        color: #64748b;
+        padding: 4px 2px;
+    }
+
+    .trazo-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-left: 6px solid var(--c);
+        border-radius: 10px;
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+
+    .trazo-num {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--c);
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        display: grid;
+        place-items: center;
+    }
+
+    .trazo-nombre {
+        flex: 1 1 140px;
+        min-width: 0;
+        font-weight: bold;
+        overflow-wrap: anywhere;
+    }
+
+    .trazo-nombre small {
+        display: block;
+        font-weight: normal;
+        color: #64748b;
+    }
+
+    .trazo-acciones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+        justify-content: flex-end;
+    }
+
+    .trazo-acciones button {
+        border: none;
+        background: #f1f5f9;
+        border-radius: 6px;
+        padding: 5px 7px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .trazo-acciones button:hover:not(:disabled) {
+        background: #e2e8f0;
+    }
+
+    .trazo-acciones button:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+
+    .control-dibujo {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        padding: 10px;
+        max-width: 270px;
+        font-size: 13px;
+    }
+
+    .control-dibujo small {
+        color: #64748b;
+    }
+
+    .cd-botones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .cd-botones button {
+        border: none;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-weight: bold;
+        font-size: 13px;
+        cursor: pointer;
+        background: #f1f5f9;
+    }
+
+    .cd-botones .cd-ok {
+        background: #059669;
+        color: white;
+    }
+
+    #map.dibujando,
+    #map.dibujando .leaflet-interactive {
+        cursor: crosshair;
+    }
+
+    .vertice-icon div {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid var(--c);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        font-size: 9px;
+        line-height: 14px;
+        text-align: center;
+        color: var(--c);
+    }
+
+    .vertice-icon.inicio div {
+        background: var(--c);
+        color: white;
+    }
+
+    .trazo-inicio div {
+        background: var(--c);
+        color: white;
+        font: bold 11px/20px Arial, sans-serif;
+        text-align: center;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    }
+
+    .popup-mover {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 12px;
+    }
+
+    .popup-mover select {
+        margin-top: 4px;
+        width: 100%;
+        padding: 5px;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        font-size: 12px;
+    }
+
+    .flecha-icon div {
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-left: 11px solid var(--c);
+        transform-origin: 50% 50%;
+    }
+
     @media (max-width: 900px) {
         .layout {
             grid-template-columns: 1fr;
@@ -389,7 +746,7 @@
             min-height: 300px;
         }
 
-        .map-wrapper {
+        #map {
             height: 400px;
             min-height: 400px;
         }
@@ -435,13 +792,55 @@
             <input type="file" id="inputCSV" accept=".csv,text/csv">
             <button class="btn secondary" id="btnCargarKML">🗺️ Cargar KML/KMZ (barrios)</button>
             <input type="file" id="inputKML" accept=".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/xml,text/xml,application/zip,application/octet-stream,*/*">
-            <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima (seleccionados)</button>
-            <button class="btn secondary" id="btnEliminarRuta">🗑️ Eliminar ruta</button>
+            <button class="btn secondary" id="btnRutaOptima">🧭 Ruta óptima</button>
+            <button class="btn" id="btnSerpentina">🐍 Rutas serpentina</button>
+            <button class="btn secondary" id="btnLimpiarRutas">🧹 Quitar rutas</button>
             <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
             <div class="search-box">
                 <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre...">
             </div>
         </div>
+
+        <div class="serp-config">
+            <label title="Dos puntos quedan en la misma ruta si están a esta distancia o menos (directamente o a través de otros puntos).">
+                Distancia máx. entre vecinos
+                <input type="number" id="serpRadio" value="250" min="30" max="5000" step="10"> m
+            </label>
+            <label title="Grupos con menos puntos que esto se consideran aislados y van a una ruta aparte.">
+                Mínimo de puntos por ruta
+                <input type="number" id="serpMin" value="3" min="1" max="50" step="1">
+            </label>
+            <label>
+                <input type="checkbox" id="serpDesdeGPS" checked> Empezar desde mi ubicación
+            </label>
+            <label title="Define por dónde se trazan las rutas en 'Seguir calles', 'Ruta óptima' y Google Maps.">
+                Recorrido
+                <select id="modoRecorrido">
+                    <option value="pie" selected>🚶 A pie (incluye peatonales, escaleras y senderos)</option>
+                    <option value="carro">🚗 En carro / moto</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="trazos-box">
+            <div class="trazos-barra">
+                <strong class="trazos-titulo">✏️ Mis trazos</strong>
+                <button class="btn btn-sm" id="btnNuevoTrazo">✏️ Nuevo trazo</button>
+                <button class="btn btn-sm" id="btnOrdenarTrazos">📍 Ordenar según mis trazos</button>
+                <label class="trazos-tol" title="Un cliente más lejos que esto de todos los trazos queda en el grupo 'Sin trazo'.">
+                    Tolerancia <input type="number" id="trazoTol" value="40" min="5" max="500" step="5"> m
+                </label>
+                <select id="selTrazosGuardados" class="trazos-select"></select>
+                <button class="btn secondary btn-sm" id="btnGuardarTrazos">💾 Guardar como…</button>
+                <button class="btn secondary btn-sm" id="btnExportarTrazos">📤 Exportar KML</button>
+                <button class="btn secondary btn-sm" id="btnImportarTrazos">📥 Importar KML</button>
+                <input type="file" id="inputTrazos" accept=".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz,application/xml,text/xml,application/zip,application/octet-stream,*/*">
+                <button class="btn secondary btn-sm" id="btnBorrarTrazos">🗑️ Borrar todos</button>
+            </div>
+            <div id="listaTrazos" class="lista-trazos"></div>
+        </div>
+
+        <div id="rutasResumen" class="rutas-resumen"></div>
 
         <div id="status" class="status">
             📡 Solicitando permiso para acceder a tu ubicación...
@@ -471,19 +870,10 @@
 
     </div>
 
-    <div class="layout" id="layout">
+    <div class="layout">
 
-        <div class="panel" id="panel">
-            <h2>📋 Clientes (marca los que quieres visitar)</h2>
-            <div class="selection-bar">
-                <span id="contadorSeleccion">0 seleccionados</span>
-                <button class="link-btn" id="btnSeleccionarTodos">Seleccionar visibles</button>
-                <button class="link-btn" id="btnLimpiarSeleccion">Limpiar selección</button>
-            </div>
-            <div class="selection-bar">
-                <span id="contadorVisitados">0 visitados</span>
-                <button class="link-btn" id="btnRestaurarVisitados">↩️ Restaurar todos</button>
-            </div>
+        <div class="panel">
+            <h2 id="tituloLista">📋 Clientes (ordenados por distancia)</h2>
             <div class="client-list" id="clientList">
                 <div class="empty-hint">
                     Carga un archivo CSV para ver la lista de clientes aquí.
@@ -491,10 +881,7 @@
             </div>
         </div>
 
-        <div class="map-wrapper">
-            <button id="btnToggleSidebar" class="sidebar-toggle-btn" title="Mostrar/ocultar lista de clientes">◀</button>
-            <div id="map"></div>
-        </div>
+        <div id="map"></div>
 
     </div>
 
@@ -560,38 +947,17 @@
     const btnCargarKML = document.getElementById("btnCargarKML");
     const inputKML = document.getElementById("inputKML");
     const btnRutaOptima = document.getElementById("btnRutaOptima");
-    const contadorSeleccionElement = document.getElementById("contadorSeleccion");
-    const btnSeleccionarTodos = document.getElementById("btnSeleccionarTodos");
-    const btnLimpiarSeleccion = document.getElementById("btnLimpiarSeleccion");
-    const btnEliminarRuta = document.getElementById("btnEliminarRuta");
-    const btnToggleSidebar = document.getElementById("btnToggleSidebar");
-    const layoutElement = document.getElementById("layout");
-    const contadorVisitadosElement = document.getElementById("contadorVisitados");
-    const btnRestaurarVisitados = document.getElementById("btnRestaurarVisitados");
 
     btnCargarCSV.addEventListener("click", () => inputCSV.click());
     btnCargarKML.addEventListener("click", () => inputKML.click());
 
     // ==========================================================
-    // MOSTRAR / OCULTAR PANEL LATERAL DE CLIENTES
-    // ==========================================================
-
-    btnToggleSidebar.addEventListener("click", () => {
-
-        layoutElement.classList.toggle("sidebar-collapsed");
-
-        const colapsado = layoutElement.classList.contains("sidebar-collapsed");
-        btnToggleSidebar.textContent = colapsado ? "▶" : "◀";
-
-        // El mapa necesita recalcular su tamaño tras el cambio de ancho.
-        setTimeout(() => map.invalidateSize(), 220);
-    });
-
-    // ==========================================================
     // CREAR MAPA
     // ==========================================================
 
-    const map = L.map("map").setView(
+    const map = L.map("map", {
+        maxZoom: 22
+    }).setView(
         [DEFAULT_LAT, DEFAULT_LON],
         DEFAULT_ZOOM
     );
@@ -600,7 +966,8 @@
     const capaCalles = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-            maxZoom: 19,
+            maxZoom: 22,
+            maxNativeZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         }
     );
@@ -609,7 +976,8 @@
     const capaSatelite = L.tileLayer(
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         {
-            maxZoom: 19,
+            maxZoom: 22,
+            maxNativeZoom: 19,
             attribution:
                 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
         }
@@ -790,6 +1158,9 @@
         }
 
         rutaCalculada = false;
+
+        // Un nuevo CSV también invalida las rutas serpentina.
+        limpiarRutasSerpentina(false);
     }
 
     function procesarCSV(texto) {
@@ -842,23 +1213,19 @@
                 lat: valido ? lat : null,
                 lon: valido ? lon : null,
                 valido,
+                visitado: false,
                 marker: null,
                 linea: null,
                 distancia: null,
                 ordenRuta: null,
-                seleccionado: false,
-                visitado: false
+                uid: i            // identificador único de la fila (para el popup)
             };
 
             if (valido) {
 
                 cliente.marker = L.marker([lat, lon], { icon: clienteIcon }).addTo(map);
 
-                cliente.marker.bindPopup(
-                    `<b>👤 ${escapeHTML(nombre)}</b>` +
-                    `Lat: ${lat.toFixed(7)}<br>` +
-                    `Lon: ${lon.toFixed(7)}`
-                );
+                cliente.marker.bindPopup(popupCliente(cliente));
             }
 
             clientes.push(cliente);
@@ -1190,40 +1557,35 @@
     // necesitas algo más robusto, se puede migrar a OpenRouteService
     // (gratis con API key) o a un servidor OSRM propio.
 
-    // Cantidad mínima y máxima de clientes seleccionados para calcular ruta.
-    // El mínimo evita rutas sin sentido (1 solo punto); el máximo protege
-    // al servidor gratuito de OSRM, que no está pensado para cargas grandes.
-    const MIN_CLIENTES_RUTA = 2;
-    const MAX_CLIENTES_RUTA = 25;
-
     btnRutaOptima.addEventListener("click", calcularRutaOptima);
 
     // ==========================================================
-    // ELIMINAR LA RUTA TRAZADA (para poder generar una nueva)
+    // MODO DE RECORRIDO: A PIE O EN CARRO
     // ==========================================================
+    //
+    // router.project-osrm.org solo calcula rutas para carro (ignora
+    // peatonales, escaleras y senderos). Para ir a pie se usa el servidor
+    // OSRM de FOSSGIS (el mismo que usa openstreetmap.org para "A pie"),
+    // que sí tiene en cuenta las vías peatonales. Ambos son gratuitos y
+    // sin API key.
 
-    btnEliminarRuta.addEventListener("click", () => {
-
-        if (!rutaCalculada && !lineaRutaOptima) {
-            statusElement.textContent = "ℹ️ No hay ninguna ruta trazada todavía.";
-            statusElement.className = "status";
-            return;
+    const SERVIDORES_RUTA = {
+        pie: {
+            base: "https://routing.openstreetmap.de/routed-foot",
+            google: "walking",
+            texto: "a pie"
+        },
+        carro: {
+            base: "https://router.project-osrm.org",
+            google: "driving",
+            texto: "en carro"
         }
+    };
 
-        if (lineaRutaOptima) {
-            map.removeLayer(lineaRutaOptima);
-            lineaRutaOptima = null;
-        }
-
-        clientes.forEach(c => { c.ordenRuta = null; });
-        rutaCalculada = false;
-
-        statusElement.textContent =
-            "🗑️ Ruta eliminada. Marca clientes y presiona \"Ruta óptima\" para generar una nueva.";
-        statusElement.className = "status";
-
-        renderizarListaClientes();
-    });
+    function modoRecorrido() {
+        const sel = document.getElementById("modoRecorrido");
+        return SERVIDORES_RUTA[sel ? sel.value : "pie"] || SERVIDORES_RUTA.pie;
+    }
 
     async function calcularRutaOptima() {
 
@@ -1233,31 +1595,28 @@
             return;
         }
 
-        let objetivos = clientes.filter(c => c.valido && !c.visitado && c.seleccionado);
+        // Respeta el filtro de búsqueda si el usuario tiene uno activo.
+        const filtro = normalizarEncabezado(buscadorInput.value || "");
 
-        if (objetivos.length < MIN_CLIENTES_RUTA) {
-            statusElement.textContent =
-                `⚠️ Selecciona al menos ${MIN_CLIENTES_RUTA} clientes (marca la casilla ☐ en la lista) para calcular una ruta.`;
+        const objetivos = clientes.filter(c =>
+            c.valido && normalizarEncabezado(c.nombre).includes(filtro)
+        );
+
+        if (objetivos.length === 0) {
+            statusElement.textContent = "⚠️ No hay clientes válidos para calcular una ruta.";
             statusElement.className = "status warning";
             return;
         }
 
-        let mensajeReduccion = "";
-
-        if (objetivos.length > MAX_CLIENTES_RUTA) {
-
-            // Nos quedamos con los MAX_CLIENTES_RUTA más cercanos a tu posición
-            // (línea recta), para no sobrecargar el servidor gratuito de rutas.
-            objetivos = objetivos
-                .slice()
-                .sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity))
-                .slice(0, MAX_CLIENTES_RUTA);
-
-            mensajeReduccion =
-                ` (se redujo automáticamente a los ${MAX_CLIENTES_RUTA} clientes seleccionados más cercanos a ti)`;
+        if (objetivos.length > 40) {
+            statusElement.textContent =
+                "⚠️ Hay demasiados clientes visibles (" + objetivos.length +
+                ") para el servidor gratuito. Usa el buscador para filtrar un grupo más pequeño (máx. ~40).";
+            statusElement.className = "status warning";
+            return;
         }
 
-        statusElement.textContent = "🧭 Calculando ruta óptima..." + mensajeReduccion;
+        statusElement.textContent = "🧭 Calculando ruta óptima...";
         statusElement.className = "status";
 
         // OSRM espera coordenadas como "lon,lat" separadas por ";".
@@ -1266,7 +1625,7 @@
             .join(";");
 
         const url =
-            "https://router.project-osrm.org/trip/v1/driving/" + coordenadas +
+            modoRecorrido().base + "/trip/v1/driving/" + coordenadas +
             "?source=first&roundtrip=false&geometries=geojson&overview=full";
 
         try {
@@ -1279,6 +1638,10 @@
             }
 
             const viaje = datos.trips[0];
+
+            // La ruta óptima reemplaza a las rutas serpentina (si había).
+            limpiarRutasSerpentina(false);
+            clientes.forEach(c => { c.ordenRuta = null; });
 
             // Dibujar la ruta siguiendo calles reales.
             const puntosRuta = viaje.geometry.coordinates.map(c => [c[1], c[0]]);
@@ -1310,7 +1673,7 @@
             statusElement.textContent =
                 "✅ Ruta óptima calculada: " + objetivos.length + " paradas · " +
                 formatearDistancia(viaje.distance) + " · " +
-                formatearDuracion(viaje.duration) + mensajeReduccion;
+                formatearDuracion(viaje.duration) + " " + modoRecorrido().texto;
 
             statusElement.className = "status success";
 
@@ -1336,7 +1699,7 @@
 
         clientes.forEach(c => {
 
-            if (!c.valido || c.visitado) return;
+            if (!c.valido) return;
 
             c.distancia = calcularDistanciaMetros(userLat, userLon, c.lat, c.lon);
 
@@ -1352,27 +1715,19 @@
                 }).addTo(map);
 
             } else {
-
                 c.linea.setLatLngs(latlngs);
-
-                if (!map.hasLayer(c.linea)) {
-                    c.linea.addTo(map);
-                }
             }
 
-            if (c.marker) {
+            // Con rutas serpentina visibles, las líneas hacia cada cliente
+            // se atenúan para que no tapen el recorrido.
+            c.linea.setStyle({ opacity: serp.activa ? 0.12 : 0.6 });
 
-                if (!map.hasLayer(c.marker)) {
-                    c.marker.addTo(map);
-                }
-
-                c.marker.bindPopup(
-                    `<b>👤 ${escapeHTML(c.nombre)}</b>` +
-                    `Lat: ${c.lat.toFixed(7)}<br>` +
-                    `Lon: ${c.lon.toFixed(7)}<br>` +
-                    `📏 Distancia: ${formatearDistancia(c.distancia)}`
-                );
+            // Si el cliente pertenece a una ruta oculta, su línea tampoco se muestra.
+            if (c.rutaSerp && c.rutaSerp.visible === false && map.hasLayer(c.linea)) {
+                map.removeLayer(c.linea);
             }
+
+            refrescarPopupCliente(c);
         });
     }
 
@@ -1394,22 +1749,16 @@
             normalizarEncabezado(c.nombre).includes(filtro)
         );
 
-        // Ordenar: primero válidos no visitados (por ruta óptima o distancia),
-        // luego coordenadas inválidas, y al final los ya visitados.
+        // Ordenar: primero los pendientes (no visitados), luego los visitados.
+        // Dentro de cada grupo: si hay una ruta óptima calculada, por orden de
+        // visita; si no, por distancia en línea recta (ascendente). Inválidos al final.
         listaFiltrada = listaFiltrada.slice().sort((a, b) => {
 
-            const nivel = (c) => {
-                if (c.valido && !c.visitado) return 0;
-                if (!c.valido) return 1;
-                return 2; // valido && visitado
-            };
+            if (a.visitado !== b.visitado) {
+                return a.visitado ? 1 : -1;
+            }
 
-            const nivelA = nivel(a);
-            const nivelB = nivel(b);
-
-            if (nivelA !== nivelB) return nivelA - nivelB;
-
-            if (nivelA === 0) {
+            if (a.valido && b.valido) {
 
                 if (rutaCalculada && a.ordenRuta !== null && b.ordenRuta !== null) {
                     return a.ordenRuta - b.ordenRuta;
@@ -1417,6 +1766,9 @@
 
                 return (a.distancia ?? Infinity) - (b.distancia ?? Infinity);
             }
+
+            if (a.valido && !b.valido) return -1;
+            if (!a.valido && b.valido) return 1;
 
             return 0;
         });
@@ -1427,41 +1779,48 @@
             return;
         }
 
-        clientListElement.innerHTML = listaFiltrada.map(c => {
+        const htmlCliente = (c) => {
 
-            if (c.valido && !c.visitado) {
+            if (c.valido) {
 
                 const distTexto = c.distancia !== null
                     ? "📏 " + formatearDistancia(c.distancia)
                     : "📡 Esperando GPS...";
 
                 const numeroParada =
-                    rutaCalculada && c.ordenRuta !== null
-                        ? `🔢 Parada ${c.ordenRuta + 1} · `
-                        : "";
+                    c.rutaSerp
+                        ? `${iconoRuta(c.rutaSerp)} ${escapeHTML(c.rutaSerp.nombre)} · Parada ${c.paradaSerp} · `
+                        : rutaCalculada && c.ordenRuta !== null
+                            ? `🔢 Parada ${c.ordenRuta + 1} · `
+                            : "";
 
-                const marcado = c.seleccionado ? "checked" : "";
+                const claseVisitado = c.visitado ? " visitado" : "";
+
+                const acciones = c.visitado
+                    ? `
+                        <div class="client-actions">
+                            <button class="btn-mini btn-deshacer" data-nombre="${escapeHTML(c.nombre)}" data-accion="deshacer">
+                                ↩️ Deshacer
+                            </button>
+                        </div>
+                    `
+                    : `
+                        <div class="client-actions">
+                            <button class="btn-mini btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="visitar">
+                                📋 Visitado (copiar ubicación)
+                            </button>
+                        </div>
+                    `;
+
+                const estiloRuta = c.rutaSerp
+                    ? ` en-ruta" style="--c:${c.rutaSerp.color}`
+                    : "";
 
                 return `
-                    <div class="client-item">
-                        <input type="checkbox" class="select-checkbox" data-nombre="${escapeHTML(c.nombre)}" ${marcado}>
-                        <div class="info" data-nombre="${escapeHTML(c.nombre)}">
-                            <div class="name">👤 ${escapeHTML(c.nombre)}</div>
-                            <div class="dist">${numeroParada}${distTexto}</div>
-                        </div>
-                        <button class="btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="visitar">✅ Visitado</button>
-                    </div>
-                `;
-
-            } else if (c.valido && c.visitado) {
-
-                return `
-                    <div class="client-item visited">
-                        <div class="info">
-                            <div class="name">👤 ${escapeHTML(c.nombre)}</div>
-                            <div class="dist">✅ Ya visitado</div>
-                        </div>
-                        <button class="btn-visitar" data-nombre="${escapeHTML(c.nombre)}" data-accion="restaurar">↩️ Restaurar</button>
+                    <div class="client-item${claseVisitado}${estiloRuta}" data-nombre="${escapeHTML(c.nombre)}">
+                        <div class="name">${c.visitado ? "✅" : "👤"} ${escapeHTML(c.nombre)}</div>
+                        <div class="dist">${c.visitado ? "Visitado" : numeroParada + distTexto}</div>
+                        ${acciones}
                     </div>
                 `;
 
@@ -1469,18 +1828,25 @@
 
                 return `
                     <div class="client-item invalid">
-                        <div class="info">
-                            <div class="name">⚠️ ${escapeHTML(c.nombre)}</div>
-                            <div class="dist invalid-text">Coordenadas inválidas</div>
-                        </div>
+                        <div class="name">⚠️ ${escapeHTML(c.nombre)}</div>
+                        <div class="dist invalid-text">Coordenadas inválidas</div>
                     </div>
                 `;
             }
+        };
 
-        }).join("");
+        document.getElementById("tituloLista").textContent = serp.activa
+            ? "📋 Clientes por ruta"
+            : "📋 Clientes (ordenados por distancia)";
 
-        // Click en el nombre/distancia: centrar el mapa y abrir su popup.
-        clientListElement.querySelectorAll(".info[data-nombre]").forEach(item => {
+        clientListElement.innerHTML = serp.activa
+            ? htmlListaPorRutas(listaFiltrada, htmlCliente)
+            : listaFiltrada.map(htmlCliente).join("");
+
+        conectarEventosGruposLista();
+
+        // Click en un cliente: centrar el mapa y abrir su popup.
+        clientListElement.querySelectorAll(".client-item[data-nombre]").forEach(item => {
 
             item.addEventListener("click", () => {
 
@@ -1494,124 +1860,2038 @@
             });
         });
 
-        // Botón "✅ Visitado" / "↩️ Restaurar".
-        clientListElement.querySelectorAll(".btn-visitar").forEach(boton => {
+        // Botones "Visitado" y "Deshacer": no deben disparar el click del item.
+        clientListElement.querySelectorAll(".btn-mini").forEach(boton => {
 
-            boton.addEventListener("click", () => {
+            boton.addEventListener("click", (evento) => {
+
+                evento.stopPropagation();
 
                 const nombre = boton.getAttribute("data-nombre");
                 const accion = boton.getAttribute("data-accion");
                 const cliente = clientes.find(c => c.nombre === nombre && c.valido);
 
-                if (cliente) {
-                    marcarVisitado(cliente, accion === "visitar");
+                if (!cliente) return;
+
+                if (accion === "visitar") {
+                    copiarUbicacionActual();
+                    cliente.visitado = true;
+                    actualizarIconoParada(cliente);
+                    renderizarListaClientes();
+                    if (serp.activa) renderizarResumenRutas();
+                    enfocarSiguientePendiente(cliente.rutaSerp);
+                } else if (accion === "deshacer") {
+                    cliente.visitado = false;
+                    actualizarIconoParada(cliente);
+                    renderizarListaClientes();
+                    if (serp.activa) renderizarResumenRutas();
                 }
             });
         });
+    }
 
-        // Checkbox: marcar/desmarcar cliente para la ruta.
-        clientListElement.querySelectorAll(".select-checkbox").forEach(checkbox => {
+    // ==========================================================
+    // COPIAR UBICACIÓN ACTUAL Y AVANZAR AL SIGUIENTE CLIENTE
+    // ==========================================================
 
-            checkbox.addEventListener("change", () => {
+    // Copia al portapapeles la ubicación GPS actual (lat, lon) del usuario.
+    function copiarUbicacionActual() {
 
-                const nombre = checkbox.getAttribute("data-nombre");
-                const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+        if (userLat === null || userLon === null) {
+            statusElement.textContent =
+                "⚠️ Aún no hay ubicación GPS disponible para copiar.";
+            statusElement.className = "status warning";
+            return;
+        }
 
-                if (cliente) {
-                    cliente.seleccionado = checkbox.checked;
-                    actualizarContadorSeleccion();
-                }
+        const texto = `${userLat.toFixed(7)}, ${userLon.toFixed(7)}`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+
+            navigator.clipboard.writeText(texto).then(() => {
+                statusElement.textContent = `📋 Ubicación copiada: ${texto}`;
+                statusElement.className = "status success";
+            }).catch(() => {
+                copiarConFallback(texto);
             });
+
+        } else {
+            copiarConFallback(texto);
+        }
+    }
+
+    // Método alternativo de copiado por si el navegador no soporta
+    // la Clipboard API (por ejemplo, en conexiones no seguras/HTTP).
+    function copiarConFallback(texto) {
+
+        const textarea = document.createElement("textarea");
+        textarea.value = texto;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        try {
+            document.execCommand("copy");
+            statusElement.textContent = `📋 Ubicación copiada: ${texto}`;
+            statusElement.className = "status success";
+        } catch (err) {
+            statusElement.textContent = "❌ No se pudo copiar la ubicación.";
+            statusElement.className = "status error";
+        }
+
+        document.body.removeChild(textarea);
+    }
+
+    // Centra el mapa y hace scroll en la lista hacia el siguiente cliente
+    // pendiente (no visitado), para continuar el recorrido sin buscarlo.
+    function enfocarSiguientePendiente(ruta) {
+
+        let siguiente = null;
+
+        // Con rutas serpentina: seguir con la próxima parada de la MISMA ruta.
+        if (ruta) {
+            const proximo = ruta.clientes.find(c => !c.visitado);
+            if (proximo) {
+                siguiente = clientListElement.querySelector(
+                    `.client-item[data-nombre="${CSS.escape(proximo.nombre)}"]`
+                );
+            }
+        }
+
+        if (!siguiente) {
+            siguiente = clientListElement.querySelector(
+                ".client-item[data-nombre]:not(.visitado)"
+            );
+        }
+
+        if (!siguiente) return;
+
+        const nombre = siguiente.getAttribute("data-nombre");
+        const cliente = clientes.find(c => c.nombre === nombre && c.valido);
+
+        if (cliente && cliente.marker) {
+            map.setView([cliente.lat, cliente.lon], 18);
+            cliente.marker.openPopup();
+        }
+
+        siguiente.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    buscadorInput.addEventListener("input", renderizarListaClientes);
+
+    // ==========================================================
+    // RUTAS SERPENTINA (agrupar por cercanía + recorrido en un solo sentido)
+    // ==========================================================
+    //
+    // 1. AGRUPAR: dos clientes quedan en la misma ruta si están a menos de
+    //    "Distancia máx. entre vecinos" (directamente o encadenados por otros
+    //    clientes). Los grupos muy pequeños se consideran AISLADOS y se juntan
+    //    en una ruta aparte.
+    // 2. SERPENTINA: dentro de cada grupo se prueban ángulos y anchos de franja
+    //    (≈ una cuadra). Los puntos se cortan en franjas paralelas y cada franja
+    //    se recorre en sentido contrario a la anterior, como una serpiente. Así
+    //    nunca se vuelve a una franja ya recorrida. Se queda la combinación con
+    //    el recorrido más corto.
+    // 3. PULIDO: dentro de una misma franja se corrigen cruces (2-opt) sin
+    //    cambiar el orden de las franjas.
+    // 4. ENCADENAR: las rutas se ordenan empezando por la más cercana a tu GPS,
+    //    y cada ruta arranca en la esquina más cercana al final de la anterior.
+
+    const serp = {
+        activa: false,
+        rutas: [],
+        capas: L.layerGroup().addTo(map),
+        sinRutaColapsada: false,
+        modo: null,          // "serpentina" | "trazos"
+        tolTrazo: 40
+    };
+
+    const COLORES_RUTA = [
+        "#dc2626", "#0891b2", "#16a34a", "#9333ea",
+        "#ea580c", "#db2777", "#0d9488", "#ca8a04"
+    ];
+    const COLOR_AISLADOS = "#475569";
+
+    const rutasResumenElement = document.getElementById("rutasResumen");
+
+    document.getElementById("btnSerpentina")
+        .addEventListener("click", generarRutasSerpentina);
+
+    document.getElementById("btnLimpiarRutas")
+        .addEventListener("click", () => limpiarRutasSerpentina(true));
+
+    // ---------- Geometría local en metros ----------
+
+    function crearProyeccion(puntos) {
+
+        const lat0 = puntos.reduce((s, p) => s + p.lat, 0) / puntos.length;
+        const lon0 = puntos.reduce((s, p) => s + p.lon, 0) / puntos.length;
+        const kx = 111320 * Math.cos(lat0 * Math.PI / 180);
+        const ky = 110540;
+
+        return (lat, lon) => ({ x: (lon - lon0) * kx, y: (lat - lat0) * ky });
+    }
+
+    const dist2D = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+    function largoRuta(ruta, inicio) {
+
+        let d = inicio && ruta.length ? dist2D(inicio, ruta[0]) : 0;
+
+        for (let i = 1; i < ruta.length; i++) d += dist2D(ruta[i - 1], ruta[i]);
+
+        return d;
+    }
+
+    // ---------- 1. Agrupar por cercanía (componentes conectadas) ----------
+
+    function agruparPorCercania(puntos, radio) {
+
+        const padre = puntos.map((_, i) => i);
+        const raiz = i => (padre[i] === i ? i : (padre[i] = raiz(padre[i])));
+
+        for (let i = 0; i < puntos.length; i++) {
+            for (let j = i + 1; j < puntos.length; j++) {
+                if (dist2D(puntos[i], puntos[j]) <= radio) {
+                    padre[raiz(i)] = raiz(j);
+                }
+            }
+        }
+
+        const grupos = new Map();
+
+        puntos.forEach((p, i) => {
+            const r = raiz(i);
+            if (!grupos.has(r)) grupos.set(r, []);
+            grupos.get(r).push(p);
         });
 
-        actualizarContadorSeleccion();
-        actualizarContadorVisitados();
+        return [...grupos.values()];
     }
 
-    // ==========================================================
-    // CONTADOR Y ATAJOS DE SELECCIÓN
-    // ==========================================================
+    // ---------- 2. Serpentina por franjas ----------
 
-    function actualizarContadorSeleccion() {
+    // esquina: 0 = arriba-izq, 1 = arriba-der, 2 = abajo-izq, 3 = abajo-der
+    // (medido en el sistema girado según el ángulo de las calles).
+    function construirSerpentina(puntos, anguloGrados, ancho, desfase, esquina) {
 
-        const total = clientes.filter(c => c.valido && c.seleccionado).length;
+        const a = anguloGrados * Math.PI / 180;
+        const cs = Math.cos(a);
+        const sn = Math.sin(a);
 
-        contadorSeleccionElement.textContent =
-            total === 1 ? "1 seleccionado" : total + " seleccionados";
+        let vMin = Infinity;
+
+        const P = puntos.map(p => {
+            const u = p.x * cs + p.y * sn;   // avance a lo largo de la franja
+            const v = -p.x * sn + p.y * cs;  // posición entre franjas
+            if (v < vMin) vMin = v;
+            return { p, u, v };
+        });
+
+        const franjas = new Map();
+
+        P.forEach(o => {
+            const b = Math.floor((o.v - vMin + desfase) / ancho);
+            if (!franjas.has(b)) franjas.set(b, []);
+            franjas.get(b).push(o);
+        });
+
+        const claves = [...franjas.keys()].sort((x, y) => x - y);
+        if (esquina < 2) claves.reverse();
+
+        let sentido = esquina % 2 === 0 ? 1 : -1;
+        const ruta = [];
+
+        claves.forEach((k, i) => {
+            franjas.get(k)
+                .sort((x, y) => sentido * (x.u - y.u))
+                .forEach(o => { o.p._franja = i; ruta.push(o.p); });
+            sentido = -sentido;
+        });
+
+        return { ruta, franjas: claves.length };
     }
 
-    function actualizarContadorVisitados() {
+    function mejorSerpentina(puntos, inicio) {
 
-        const total = clientes.filter(c => c.valido && c.visitado).length;
+        if (puntos.length <= 2) {
+            const ruta = puntos.slice();
+            if (inicio && ruta.length === 2 && dist2D(inicio, ruta[1]) < dist2D(inicio, ruta[0])) {
+                ruta.reverse();
+            }
+            ruta.forEach(p => { p._franja = 0; });
+            return { ruta, franjas: 1 };
+        }
 
-        contadorVisitadosElement.textContent =
-            total === 1 ? "1 visitado" : total + " visitados";
+        const n = puntos.length;
+        const pasoAngulo = n > 300 ? 6 : n > 120 ? 3 : 2;
+        const anchos = [40, 50, 60, 70, 80, 90, 100, 120, 140, 170, 200];
+
+        let mejor = null;
+
+        for (let ang = 0; ang < 180; ang += pasoAngulo) {
+            for (const w of anchos) {
+                for (const f of [0, 0.25, 0.5, 0.75]) {
+                    for (let esq = 0; esq < 4; esq++) {
+
+                        const { ruta } = construirSerpentina(puntos, ang, w, f * w, esq);
+                        const largo = largoRuta(ruta, inicio);
+
+                        if (!mejor || largo < mejor.largo - 0.01) {
+                            mejor = { ang, w, desfase: f * w, esq, largo };
+                        }
+                    }
+                }
+            }
+        }
+
+        const final = construirSerpentina(puntos, mejor.ang, mejor.w, mejor.desfase, mejor.esq);
+
+        pulirDentroDeFranjas(final.ruta, inicio);
+
+        return { ...final, angulo: mejor.ang, ancho: mejor.w };
     }
 
-    btnSeleccionarTodos.addEventListener("click", () => {
+    // ---------- 3. Pulido: 2-opt solo dentro de una misma franja ----------
+
+    function pulirDentroDeFranjas(ruta, inicio) {
+
+        const punto = i => (i < 0 ? inicio : ruta[i]);
+        let mejora = true;
+        let vueltas = 0;
+
+        while (mejora && vueltas++ < 50) {
+
+            mejora = false;
+
+            for (let i = 0; i < ruta.length - 1; i++) {
+                for (let j = i + 1; j < ruta.length && ruta[j]._franja === ruta[i]._franja; j++) {
+
+                    const antes = punto(i - 1);
+                    const despues = ruta[j + 1];
+
+                    const actual =
+                        (antes ? dist2D(antes, ruta[i]) : 0) +
+                        (despues ? dist2D(ruta[j], despues) : 0);
+
+                    const nuevo =
+                        (antes ? dist2D(antes, ruta[j]) : 0) +
+                        (despues ? dist2D(ruta[i], despues) : 0);
+
+                    if (nuevo < actual - 0.5) {
+                        const tramo = ruta.slice(i, j + 1).reverse();
+                        ruta.splice(i, tramo.length, ...tramo);
+                        mejora = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // ---------- Ruta de aislados: vecino más cercano + 2-opt ----------
+
+    function rutaVecinoMasCercano(puntos, inicio) {
+
+        const pendientes = puntos.slice();
+        const ruta = [];
+        let actual = inicio || pendientes[0];
+
+        while (pendientes.length) {
+            let k = 0;
+            pendientes.forEach((p, i) => {
+                if (dist2D(actual, p) < dist2D(actual, pendientes[k])) k = i;
+            });
+            actual = pendientes.splice(k, 1)[0];
+            actual._franja = 0;
+            ruta.push(actual);
+        }
+
+        // 2-opt completo (son pocos puntos).
+        let mejora = true;
+        while (mejora) {
+            mejora = false;
+            for (let i = 0; i < ruta.length - 1; i++) {
+                for (let j = i + 1; j < ruta.length; j++) {
+                    const tramo = ruta.slice(i, j + 1).reverse();
+                    const candidato = [...ruta.slice(0, i), ...tramo, ...ruta.slice(j + 1)];
+                    if (largoRuta(candidato, inicio) < largoRuta(ruta, inicio) - 0.5) {
+                        ruta.splice(0, ruta.length, ...candidato);
+                        mejora = true;
+                    }
+                }
+            }
+        }
+
+        return ruta;
+    }
+
+    // ---------- 4. Generar todo ----------
+
+    function iconoRuta(r) {
+        return { serpentina: "🐍", aislados: "📍", trazo: "✏️", sin: "⚪" }[r && r.tipo] || "🐍";
+    }
+
+    // Quita rutas anteriores (serpentina, trazos u óptima) antes de armar nuevas.
+    function prepararNuevasRutas() {
+
+        limpiarRutasSerpentina(false);
+
+        if (lineaRutaOptima) {
+            map.removeLayer(lineaRutaOptima);
+            lineaRutaOptima = null;
+        }
+
+        clientes.forEach(c => { c.ordenRuta = null; });
+    }
+
+    // Serpentina automática para un conjunto de clientes. Devuelve las rutas
+    // "en bruto" ({ tipo, puntos: [{ cliente, x, y }], franjas }).
+    function calcularRutasAutomaticas(objetivos, radio, minimo, inicioLL) {
+
+        const aXY = crearProyeccion(objetivos.concat(inicioLL ? [inicioLL] : []));
+
+        const puntos = objetivos.map(c => ({ cliente: c, ...aXY(c.lat, c.lon) }));
+        const inicio = inicioLL ? aXY(inicioLL.lat, inicioLL.lon) : null;
+
+        const grupos = agruparPorCercania(puntos, radio);
+        const principales = grupos.filter(g => g.length >= minimo);
+        const aislados = grupos.filter(g => g.length < minimo).flat();
+
+        // Encadenar: siempre sigue el grupo más cercano a donde terminó el anterior.
+        const rutas = [];
+        let posicion = inicio;
+        const pendientes = principales.slice();
+
+        while (pendientes.length) {
+
+            let k = 0;
+
+            if (posicion) {
+                let mejorD = Infinity;
+                pendientes.forEach((g, i) => {
+                    const d = Math.min(...g.map(p => dist2D(posicion, p)));
+                    if (d < mejorD) { mejorD = d; k = i; }
+                });
+            } else {
+                pendientes.forEach((g, i) => { if (g.length > pendientes[k].length) k = i; });
+            }
+
+            const grupo = pendientes.splice(k, 1)[0];
+            const res = mejorSerpentina(grupo, posicion);
+
+            rutas.push({ tipo: "serpentina", puntos: res.ruta, franjas: res.franjas });
+            posicion = res.ruta[res.ruta.length - 1];
+        }
+
+        if (aislados.length) {
+            rutas.push({
+                tipo: "aislados",
+                puntos: rutaVecinoMasCercano(aislados, posicion),
+                franjas: 0
+            });
+        }
+
+        return { rutas, aislados: aislados.length };
+    }
+
+    // Numera, colorea, dibuja y enlaza con la lista un conjunto de rutas en bruto.
+    function finalizarRutas(rutas, modo, hayGPS) {
+
+        let ordenGlobal = 0;
+        let nAuto = 0;
+
+        rutas.forEach(r => {
+
+            if (r.tipo === "serpentina") {
+                nAuto++;
+                r.nombre = modo === "trazos" ? `Auto ${nAuto}` : `Ruta ${nAuto}`;
+                r.color = COLORES_RUTA[(nAuto - 1) % COLORES_RUTA.length];
+            } else if (r.tipo === "aislados") {
+                r.nombre = "Aislados";
+                r.color = COLOR_AISLADOS;
+            } else if (r.tipo === "trazo") {
+                r.nombre = r.trazo.nombre;
+                r.color = r.trazo.color;
+            } else if (r.tipo === "sin") {
+                r.nombre = "Sin trazo";
+                r.color = COLOR_SIN_TRAZO;
+            }
+
+            r.clientes = r.puntos.map(p => p.cliente);
+            r.metros = 0;
+            r.visible = true;      // se ve en el mapa y en la lista
+            r.colapsada = false;   // solo afecta la lista
+            r.infoTexto = "";
+
+            r.clientes.forEach((c, k) => {
+                c.rutaSerp = r;
+                c.paradaSerp = k + 1;
+                c.ordenRuta = ordenGlobal++;
+                if (k > 0) {
+                    const prev = r.clientes[k - 1];
+                    r.metros += calcularDistanciaMetros(prev.lat, prev.lon, c.lat, c.lon);
+                }
+            });
+
+            // En un trazo, lo que se camina es el propio trazo.
+            if (r.tipo === "trazo") r.metros = largoTrazo(r.trazo);
+        });
+
+        serp.rutas = rutas;
+        serp.activa = true;
+        serp.modo = modo;
+        rutaCalculada = true;
+
+        // Con rutas por trazo, los trazos se ven como parte de cada ruta
+        // (y se ocultan junto con ella), así que la capa de trazos sueltos se retira.
+        if (modo === "trazos") {
+            map.removeLayer(capaTrazos);
+        } else if (!map.hasLayer(capaTrazos)) {
+            capaTrazos.addTo(map);
+        }
+
+        dibujarRutasSerpentina(hayGPS);
+        renderizarResumenRutas();
+        actualizarDistanciasYLineas();
+        renderizarListaClientes();
+    }
+
+    function generarRutasSerpentina() {
+
+        const radio = Math.max(30, parseFloat(document.getElementById("serpRadio").value) || 250);
+        const minimo = Math.max(1, parseInt(document.getElementById("serpMin").value, 10) || 3);
+        const desdeGPS = document.getElementById("serpDesdeGPS").checked;
+
+        if (edicion.activa) {
+            statusElement.textContent = "✏️ Termina o cancela el trazo que estás dibujando antes de generar rutas.";
+            statusElement.className = "status warning";
+            return;
+        }
 
         const filtro = normalizarEncabezado(buscadorInput.value || "");
 
-        clientes.forEach(c => {
-            if (c.valido && !c.visitado && normalizarEncabezado(c.nombre).includes(filtro)) {
-                c.seleccionado = true;
-            }
-        });
+        const objetivos = clientes.filter(c =>
+            c.valido && !c.visitado && normalizarEncabezado(c.nombre).includes(filtro)
+        );
 
-        renderizarListaClientes();
-    });
-
-    btnLimpiarSeleccion.addEventListener("click", () => {
-
-        clientes.forEach(c => { c.seleccionado = false; });
-        renderizarListaClientes();
-    });
-
-    // ==========================================================
-    // MARCAR CLIENTES COMO VISITADOS (quitarlos del mapa sin tocar el CSV)
-    // ==========================================================
-
-    function marcarVisitado(cliente, visitado) {
-
-        cliente.visitado = visitado;
-
-        if (visitado) {
-
-            // El cliente ya fue visitado: se quita del mapa (marcador y línea),
-            // pero sigue existiendo en memoria por si se quiere restaurar.
-            cliente.seleccionado = false;
-
-            if (cliente.marker && map.hasLayer(cliente.marker)) {
-                map.removeLayer(cliente.marker);
-            }
-
-            if (cliente.linea && map.hasLayer(cliente.linea)) {
-                map.removeLayer(cliente.linea);
-            }
-
-        } else {
-
-            // Restaurar: se vuelve a mostrar en el mapa y se recalcula su línea/distancia.
-            if (cliente.marker && !map.hasLayer(cliente.marker)) {
-                cliente.marker.addTo(map);
-            }
-
-            actualizarDistanciasYLineas();
+        if (objetivos.length === 0) {
+            statusElement.textContent = "⚠️ No hay clientes pendientes con coordenadas válidas para armar rutas.";
+            statusElement.className = "status warning";
+            return;
         }
 
+        prepararNuevasRutas();
+
+        const hayGPS = desdeGPS && userLat !== null && userLon !== null;
+        const inicioLL = hayGPS ? { lat: userLat, lon: userLon } : null;
+
+        const { rutas, aislados } = calcularRutasAutomaticas(objetivos, radio, minimo, inicioLL);
+
+        finalizarRutas(rutas, "serpentina", hayGPS);
+
+        const nRutas = rutas.filter(r => r.tipo === "serpentina").length;
+        const total = rutas.reduce((s, r) => s + r.metros, 0);
+
+        statusElement.textContent =
+            `✅ ${nRutas} ruta(s) serpentina con ${objetivos.length - aislados} paradas` +
+            (aislados ? ` · ${aislados} punto(s) aislado(s) en ruta aparte` : "") +
+            ` · ${formatearDistancia(total)} en línea recta.` +
+            (hayGPS ? "" : " (Sin GPS: la ruta empieza en la esquina que da el recorrido más corto.)");
+        statusElement.className = "status success";
+
+        const todos = L.latLngBounds(objetivos.map(c => [c.lat, c.lon]));
+        if (hayGPS) todos.extend([userLat, userLon]);
+        map.fitBounds(todos, { padding: [40, 40] });
+    }
+
+    // Convierte los clientes del grupo "Sin trazo" en rutas serpentina,
+    // conservando las rutas por trazo que ya existen.
+    function organizarSinTrazoAutomatico(rutaSin) {
+
+        const radio = Math.max(30, parseFloat(document.getElementById("serpRadio").value) || 250);
+        const minimo = Math.max(1, parseInt(document.getElementById("serpMin").value, 10) || 3);
+
+        const pendientes = rutaSin.clientes.filter(c => !c.visitado);
+
+        if (!pendientes.length) {
+            statusElement.textContent = "✅ No quedan clientes pendientes sin trazo.";
+            statusElement.className = "status success";
+            return;
+        }
+
+        // Rutas por trazo actuales, en bruto, para reconstruirlas igual.
+        const previas = serp.rutas
+            .filter(r => r !== rutaSin)
+            .map(r => ({
+                tipo: r.tipo,
+                trazo: r.trazo,
+                franjas: r.franjas,
+                puntos: r.clientes.map(c => ({ cliente: c }))
+            }));
+
+        // La parte automática arranca donde termina la última ruta existente.
+        const ultimaRuta = previas[previas.length - 1];
+        const ultimo = ultimaRuta ? ultimaRuta.puntos[ultimaRuta.puntos.length - 1].cliente : null;
+        const inicioLL = ultimo ? { lat: ultimo.lat, lon: ultimo.lon } : null;
+
+        const { rutas: nuevas, aislados } = calcularRutasAutomaticas(pendientes, radio, minimo, inicioLL);
+
+        const visitadosSin = rutaSin.clientes.filter(c => c.visitado);
+
+        prepararNuevasRutas();
+
+        const hayGPS = document.getElementById("serpDesdeGPS").checked && userLat !== null;
+        finalizarRutas(previas.concat(nuevas), "trazos", hayGPS);
+
+        statusElement.textContent =
+            `✅ ${pendientes.length - aislados} cliente(s) sin trazo organizados en ` +
+            `${nuevas.filter(r => r.tipo === "serpentina").length} ruta(s) automática(s)` +
+            (aislados ? ` · ${aislados} aislado(s)` : "") +
+            (visitadosSin.length ? ` · ${visitadosSin.length} ya visitado(s) quedan en "Sin ruta"` : "") + ".";
+        statusElement.className = "status success";
+    }
+
+    // ---------- Dibujo en el mapa ----------
+
+    function iconoParada(c) {
+
+        return L.divIcon({
+            className: "num-icon" + (c.visitado ? " visitado" : ""),
+            html: `<div style="--c:${c.rutaSerp.color}">${c.paradaSerp}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+            popupAnchor: [0, -12]
+        });
+    }
+
+    function actualizarIconoParada(c) {
+        if (c.rutaSerp && c.marker) c.marker.setIcon(iconoParada(c));
+    }
+
+    function dibujarFlechas(latlngs, color, capa) {
+
+        for (let i = 1; i < latlngs.length; i++) {
+
+            const a = latlngs[i - 1];
+            const b = latlngs[i];
+
+            if (calcularDistanciaMetros(a[0], a[1], b[0], b[1]) < 25) continue;
+
+            // El ángulo en pantalla no cambia con el zoom (proyección conforme).
+            const pa = map.project(a, 18);
+            const pb = map.project(b, 18);
+            const angulo = Math.atan2(pb.y - pa.y, pb.x - pa.x) * 180 / Math.PI;
+
+            L.marker([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], {
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: "flecha-icon",
+                    html: `<div style="--c:${color};transform:rotate(${angulo}deg)"></div>`,
+                    iconSize: [11, 12],
+                    iconAnchor: [5.5, 6]
+                })
+            }).addTo(capa);
+        }
+    }
+
+    function dibujarRutasSerpentina(hayGPS) {
+
+        serp.capas.clearLayers();
+
+        serp.rutas.forEach((r, i) => {
+
+            // Una ruta por trazo se dibuja sobre el trazo; las demás unen los clientes.
+            const latlngs = r.tipo === "trazo"
+                ? r.trazo.puntos.map(p => [p[0], p[1]])
+                : r.clientes.map(c => [c.lat, c.lon]);
+
+            r.capa = L.layerGroup().addTo(serp.capas);
+
+            r.linea = L.polyline(latlngs, {
+                color: r.color,
+                weight: r.tipo === "trazo" ? 5 : 4,
+                opacity: 0.9,
+                dashArray: r.tipo === "aislados" || r.tipo === "sin" ? "8, 8" : null
+            }).addTo(r.capa);
+
+            r.linea.bindPopup(
+                `<b>${iconoRuta(r)} ${escapeHTML(r.nombre)}</b>${r.clientes.length} paradas · ${formatearDistancia(r.metros)}`
+            );
+
+            r.flechas = L.layerGroup().addTo(r.capa);
+            dibujarFlechas(latlngs, r.color, r.flechas);
+
+            // En un trazo: línea fina desde cada cliente hasta el punto del trazo donde se entrega.
+            if (r.tipo === "trazo") {
+                r.clientes.forEach(c => {
+                    if (!c._proyLL) return;
+                    L.polyline([[c.lat, c.lon], c._proyLL], {
+                        color: r.color,
+                        weight: 1.5,
+                        opacity: 0.8,
+                        dashArray: "2, 4",
+                        interactive: false
+                    }).addTo(r.capa);
+                });
+            }
+
+            r.clientes.forEach(actualizarIconoParada);
+
+            // Tramo desde tu ubicación hasta el inicio de la primera ruta.
+            if (i === 0 && hayGPS && latlngs.length) {
+                L.polyline([[userLat, userLon], latlngs[0]], {
+                    color: r.color,
+                    weight: 2,
+                    opacity: 0.7,
+                    dashArray: "2, 6"
+                }).addTo(r.capa);
+            }
+        });
+    }
+
+    function detalleRuta(r) {
+
+        if (r.tipo === "serpentina") return ` · ${r.franjas} franja(s)`;
+        if (r.tipo === "aislados") return " · puntos lejos del resto";
+        if (r.tipo === "trazo") return " de trazo";
+        if (r.tipo === "sin") return ` · a más de ${serp.tolTrazo || 40} m de tus trazos`;
+        return "";
+    }
+
+    function renderizarResumenRutas() {
+
+        rutasResumenElement.innerHTML = serp.rutas.map((r, i) => `
+            <div class="ruta-chip${r.visible ? "" : " oculta"}" style="--c:${r.color}">
+                <strong>${iconoRuta(r)} ${escapeHTML(r.nombre)}</strong>
+                ${r.clientes.filter(c => !c.visitado).length}/${r.clientes.length} pendientes · ${formatearDistancia(r.metros)}${detalleRuta(r)}
+                <span class="ruta-info" id="rutaInfo${i}">${escapeHTML(r.infoTexto || "")}</span>
+                <div class="ruta-acciones">
+                    <button class="btn-mini btn-deshacer" data-ruta="${i}" data-accion="visible">${r.visible ? "🙈 Ocultar" : "👁️ Mostrar"}</button>
+                    <button class="btn-mini btn-deshacer" data-ruta="${i}" data-accion="solo">🎯 Solo esta</button>
+                    <button class="btn-mini btn-deshacer" data-ruta="${i}" data-accion="ver">🔍 Ver</button>
+                    ${r.tipo === "trazo" ? "" : `<button class="btn-mini btn-visitar" data-ruta="${i}" data-accion="calles">🛣️ Trazar recorrido</button>`}
+                    ${r.tipo === "sin" ? `<button class="btn-mini btn-visitar" data-ruta="${i}" data-accion="auto">🐍 Serpentina para estos</button>` : ""}
+                    <button class="btn-mini btn-deshacer" data-ruta="${i}" data-accion="maps">🧭 Google Maps</button>
+                </div>
+            </div>
+        `).join("");
+
+        rutasResumenElement.querySelectorAll("button[data-ruta]").forEach(boton => {
+
+            boton.addEventListener("click", () => {
+
+                const r = serp.rutas[+boton.getAttribute("data-ruta")];
+                const accion = boton.getAttribute("data-accion");
+
+                const indice = +boton.getAttribute("data-ruta");
+
+                if (accion === "visible") {
+                    cambiarVisibilidadRuta(indice, !r.visible);
+                } else if (accion === "solo") {
+                    mostrarSoloRuta(indice);
+                } else if (accion === "ver") {
+                    if (!r.visible) cambiarVisibilidadRuta(indice, true);
+                    map.fitBounds(r.linea.getBounds(), { padding: [40, 40], maxZoom: 18 });
+                } else if (accion === "calles") {
+                    seguirCalles(r, +boton.getAttribute("data-ruta"), boton);
+                } else if (accion === "auto") {
+                    organizarSinTrazoAutomatico(r);
+                } else if (accion === "maps") {
+                    abrirEnGoogleMaps(r);
+                }
+            });
+        });
+    }
+
+    // ---------- Seguir calles reales (OSRM, respetando el orden) ----------
+
+    async function seguirCalles(r, indice, boton) {
+
+        const info = document.getElementById("rutaInfo" + indice);
+        const puntos = r.clientes.map(c => [c.lon, c.lat]);
+
+        if (puntos.length < 2) {
+            info.textContent = " · una sola parada";
+            return;
+        }
+
+        const modo = modoRecorrido();
+
+        boton.disabled = true;
+        info.textContent = ` · calculando recorrido ${modo.texto}...`;
+
+        try {
+
+            // El servidor gratuito acepta un número limitado de puntos por
+            // consulta, así que se pide por tramos que se empalman.
+            const TRAMO = 50;
+            let geometria = [];
+            let metros = 0;
+            let segundos = 0;
+
+            for (let s = 0; s < puntos.length - 1; s += TRAMO - 1) {
+
+                const parte = puntos.slice(s, s + TRAMO);
+                const url =
+                    modo.base + "/route/v1/driving/" +
+                    parte.map(p => p[0] + "," + p[1]).join(";") +
+                    "?overview=full&geometries=geojson";
+
+                const respuesta = await fetch(url);
+                const datos = await respuesta.json();
+
+                if (datos.code !== "Ok" || !datos.routes || !datos.routes.length) {
+                    throw new Error(datos.message || "sin ruta");
+                }
+
+                geometria = geometria.concat(datos.routes[0].geometry.coordinates.map(c => [c[1], c[0]]));
+                metros += datos.routes[0].distance;
+                segundos += datos.routes[0].duration;
+            }
+
+            r.capa.removeLayer(r.linea);
+            r.flechas.clearLayers();
+
+            r.linea = L.polyline(geometria, {
+                color: r.color,
+                weight: 5,
+                opacity: 0.85
+            }).addTo(r.capa);
+
+            r.infoTexto = ` · ${modo.texto}: ${formatearDistancia(metros)}, ${formatearDuracion(segundos)}`;
+            info.textContent = r.infoTexto;
+
+        } catch (err) {
+
+            info.textContent = " · no se pudo calcular por calles (servidor ocupado), intenta de nuevo";
+        }
+
+        boton.disabled = false;
+    }
+
+    // ---------- Navegar en Google Maps (siguientes paradas pendientes) ----------
+
+    function abrirEnGoogleMaps(r) {
+
+        // Google Maps admite pocas paradas por enlace: se abren las siguientes 10 pendientes.
+        const pendientes = r.clientes.filter(c => !c.visitado).slice(0, 10);
+
+        if (!pendientes.length) {
+            statusElement.textContent = `✅ Todas las paradas de ${r.nombre} están visitadas.`;
+            statusElement.className = "status success";
+            return;
+        }
+
+        const ll = c => c.lat.toFixed(6) + "," + c.lon.toFixed(6);
+        const destino = pendientes[pendientes.length - 1];
+        const intermedias = pendientes.slice(0, -1);
+
+        let url = "https://www.google.com/maps/dir/?api=1&travelmode=" + modoRecorrido().google +
+            "&destination=" + ll(destino);
+
+        if (userLat !== null && userLon !== null) {
+            url += "&origin=" + userLat.toFixed(6) + "," + userLon.toFixed(6);
+        }
+
+        if (intermedias.length) {
+            url += "&waypoints=" + encodeURIComponent(intermedias.map(ll).join("|"));
+        }
+
+        window.open(url, "_blank");
+    }
+
+    // ---------- Mostrar / ocultar rutas (mapa + lista) ----------
+
+    function aplicarVisibilidadRuta(r) {
+
+        if (r.visible) {
+            if (!serp.capas.hasLayer(r.capa)) serp.capas.addLayer(r.capa);
+        } else {
+            serp.capas.removeLayer(r.capa);
+        }
+
+        r.clientes.forEach(c => {
+            [c.marker, c.linea].forEach(capa => {
+                if (!capa) return;
+                if (r.visible) {
+                    if (!map.hasLayer(capa)) capa.addTo(map);
+                } else if (map.hasLayer(capa)) {
+                    map.removeLayer(capa);
+                }
+            });
+        });
+    }
+
+    function refrescarVistaRutas() {
+        renderizarResumenRutas();
         renderizarListaClientes();
     }
 
-    btnRestaurarVisitados.addEventListener("click", () => {
+    function cambiarVisibilidadRuta(indice, visible) {
+
+        const r = serp.rutas[indice];
+        if (!r) return;
+
+        r.visible = visible;
+        if (visible) r.colapsada = false;
+
+        aplicarVisibilidadRuta(r);
+        refrescarVistaRutas();
+    }
+
+    function mostrarSoloRuta(indice) {
+
+        serp.rutas.forEach((r, k) => {
+            r.visible = k === indice;
+            if (r.visible) r.colapsada = false;
+            aplicarVisibilidadRuta(r);
+        });
+
+        const r = serp.rutas[indice];
+        if (r) map.fitBounds(r.linea.getBounds(), { padding: [40, 40], maxZoom: 18 });
+
+        refrescarVistaRutas();
+    }
+
+    function mostrarTodasLasRutas() {
+
+        serp.rutas.forEach(r => {
+            r.visible = true;
+            aplicarVisibilidadRuta(r);
+        });
+
+        refrescarVistaRutas();
+    }
+
+    // ---------- Lista lateral agrupada por ruta ----------
+
+    function htmlListaPorRutas(lista, htmlCliente) {
+
+        const hayOcultas = serp.rutas.some(r => !r.visible);
+        const todasColapsadas = serp.rutas.every(r => r.colapsada || !r.visible);
+
+        let html = `
+            <div class="barra-lista-rutas">
+                ${hayOcultas ? '<button class="btn-mini btn-deshacer" data-lista="todas">👁️ Mostrar todas</button>' : ""}
+                <button class="btn-mini btn-deshacer" data-lista="${todasColapsadas ? "expandir" : "contraer"}">
+                    ${todasColapsadas ? "▾ Expandir todas" : "▸ Contraer todas"}
+                </button>
+            </div>
+        `;
+
+        const grupo = (clave, nombre, icono, color, items, total, visible, colapsada) => {
+
+            const pendientes = items.filter(c => c.valido && !c.visitado).length;
+            const flecha = !visible ? "🙈" : colapsada ? "▸" : "▾";
+
+            let h = `
+                <div class="grupo-ruta${visible ? "" : " oculta"}" style="--c:${color}" data-grupo="${clave}">
+                    <span>${flecha}</span>
+                    <span class="titulo">${icono} ${escapeHTML(nombre)}</span>
+                    <span class="conteo">${pendientes} pend. · ${total}</span>
+                    ${clave !== "sin" ? `
+                        <button data-grupo-accion="visible" data-grupo="${clave}" title="${visible ? "Ocultar esta ruta" : "Mostrar esta ruta"}">${visible ? "🙈" : "👁️"}</button>
+                        <button data-grupo-accion="solo" data-grupo="${clave}" title="Ver solo esta ruta">🎯</button>
+                    ` : ""}
+                </div>
+            `;
+
+            if (visible && !colapsada) {
+                h += items.length
+                    ? items.map(htmlCliente).join("")
+                    : '<div class="empty-hint">Ningún cliente coincide con la búsqueda.</div>';
+            }
+
+            return h;
+        };
+
+        serp.rutas.forEach((r, i) => {
+            const items = lista.filter(c => c.rutaSerp === r);
+            html += grupo(
+                String(i),
+                r.nombre,
+                iconoRuta(r),
+                r.color,
+                items,
+                r.clientes.length,
+                r.visible,
+                r.colapsada
+            );
+        });
+
+        // Clientes que no entraron en ninguna ruta (ya visitados o fuera del filtro al generar).
+        const sinRuta = lista.filter(c => !c.rutaSerp);
+
+        if (sinRuta.length) {
+            html += grupo(
+                "sin", "Sin ruta", "⚪", "#cbd5e1",
+                sinRuta, sinRuta.length, true, serp.sinRutaColapsada
+            );
+        }
+
+        return html;
+    }
+
+    function conectarEventosGruposLista() {
+
+        if (!serp.activa) return;
+
+        // Clic en el encabezado: contraer / expandir el grupo en la lista.
+        clientListElement.querySelectorAll(".grupo-ruta").forEach(encabezado => {
+
+            encabezado.addEventListener("click", () => {
+
+                const clave = encabezado.getAttribute("data-grupo");
+
+                if (clave === "sin") {
+                    serp.sinRutaColapsada = !serp.sinRutaColapsada;
+                } else {
+                    const r = serp.rutas[+clave];
+                    if (!r) return;
+                    if (!r.visible) {
+                        cambiarVisibilidadRuta(+clave, true);
+                        return;
+                    }
+                    r.colapsada = !r.colapsada;
+                }
+
+                renderizarListaClientes();
+            });
+        });
+
+        // Botones 🙈 / 👁️ / 🎯 del encabezado.
+        clientListElement.querySelectorAll("button[data-grupo-accion]").forEach(boton => {
+
+            boton.addEventListener("click", (evento) => {
+
+                evento.stopPropagation();
+
+                const indice = +boton.getAttribute("data-grupo");
+                const accion = boton.getAttribute("data-grupo-accion");
+
+                if (accion === "visible") {
+                    cambiarVisibilidadRuta(indice, !serp.rutas[indice].visible);
+                } else if (accion === "solo") {
+                    mostrarSoloRuta(indice);
+                }
+            });
+        });
+
+        // Barra superior: mostrar todas / contraer / expandir.
+        clientListElement.querySelectorAll("button[data-lista]").forEach(boton => {
+
+            boton.addEventListener("click", () => {
+
+                const accion = boton.getAttribute("data-lista");
+
+                if (accion === "todas") {
+                    mostrarTodasLasRutas();
+                    return;
+                }
+
+                const colapsar = accion === "contraer";
+                serp.rutas.forEach(r => { if (r.visible) r.colapsada = colapsar; });
+                serp.sinRutaColapsada = colapsar;
+                renderizarListaClientes();
+            });
+        });
+    }
+
+    // ---------- Quitar rutas ----------
+
+    function limpiarRutasSerpentina(avisar) {
+
+        serp.capas.clearLayers();
 
         clientes.forEach(c => {
-            if (c.valido && c.visitado) {
-                marcarVisitado(c, false);
+            if (c.rutaSerp) {
+                if (c.marker && !map.hasLayer(c.marker)) c.marker.addTo(map);
+                if (c.linea && !map.hasLayer(c.linea)) c.linea.addTo(map);
+                c.rutaSerp = null;
+                c.paradaSerp = null;
+                c.ordenRuta = null;
+                if (c.marker) c.marker.setIcon(clienteIcon);
             }
         });
+
+        serp.rutas = [];
+        serp.activa = false;
+        serp.modo = null;
+
+        // Sin rutas por trazo, los trazos vuelven a verse solos.
+        if (!map.hasLayer(capaTrazos)) capaTrazos.addTo(map);
+        if (typeof renderizarListaTrazos === "function") renderizarListaTrazos();
+
+        if (!lineaRutaOptima) rutaCalculada = false;
+
+        rutasResumenElement.innerHTML = "";
+
+        if (avisar) {
+            actualizarDistanciasYLineas();
+            renderizarListaClientes();
+            statusElement.textContent = "🧹 Rutas quitadas del mapa.";
+            statusElement.className = "status";
+        }
+    }
+
+    // ==========================================================
+    // BOTÓN PARA AMPLIAR EL MAPA (oculta cabecera y lista de clientes)
+    // ==========================================================
+
+    const btnAmpliarMapa = L.DomUtil.create("button", "btn-ampliar-mapa", map.getContainer());
+    btnAmpliarMapa.type = "button";
+    L.DomEvent.disableClickPropagation(btnAmpliarMapa);
+    L.DomEvent.disableScrollPropagation(btnAmpliarMapa);
+
+    let mapaAmpliado = false;
+
+    function pintarBotonAmpliar() {
+        btnAmpliarMapa.innerHTML = mapaAmpliado
+            ? '<span class="icono">📋</span> Ver lista de clientes'
+            : '<span class="icono">⛶</span> Ampliar mapa';
+        btnAmpliarMapa.setAttribute("aria-pressed", mapaAmpliado ? "true" : "false");
+    }
+
+    function cambiarMapaAmpliado(ampliar, desdeHistorial) {
+
+        if (ampliar === mapaAmpliado) return;
+
+        mapaAmpliado = ampliar;
+        document.body.classList.toggle("mapa-ampliado", ampliar);
+        pintarBotonAmpliar();
+
+        // El botón "atrás" del celular también cierra el mapa ampliado.
+        if (!desdeHistorial) {
+            if (ampliar) {
+                history.pushState({ mapaAmpliado: true }, "");
+            } else if (history.state && history.state.mapaAmpliado) {
+                history.back();
+            }
+        }
+
+        // Leaflet necesita recalcular el tamaño después del cambio.
+        setTimeout(() => map.invalidateSize(), 60);
+        setTimeout(() => map.invalidateSize(), 350);
+    }
+
+    btnAmpliarMapa.addEventListener("click", () => cambiarMapaAmpliado(!mapaAmpliado, false));
+
+    window.addEventListener("popstate", () => {
+        if (mapaAmpliado) cambiarMapaAmpliado(false, true);
     });
 
-    buscadorInput.addEventListener("input", renderizarListaClientes);
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && mapaAmpliado && !edicion.activa) cambiarMapaAmpliado(false, false);
+    });
+
+    pintarBotonAmpliar();
+
+    // ==========================================================
+    // TRAZOS DIBUJADOS A MANO (rutas según la geografía real)
+    // ==========================================================
+    //
+    // Tú dibujas uno o varios trazos por donde caminas (calles, escaleras,
+    // pasajes). El punto donde empiezas a dibujar es donde empieza la entrega.
+    //
+    // "Ordenar según mis trazos":
+    //   1. Cada cliente se asigna al trazo que le queda más cerca (distancia a
+    //      la LÍNEA, no a sus puntos). Si está a más de la tolerancia de todos
+    //      los trazos, va al grupo "Sin trazo".
+    //   2. Dentro de cada trazo, los clientes se ordenan por lo avanzado que
+    //      está su punto de entrega sobre el trazo (metro 50 antes que metro 300).
+    //   3. Si el trazo pasa dos veces cerca del cliente (ida y vuelta por la
+    //      misma calle), se entrega en la PRIMERA pasada.
+    //   4. Los trazos se recorren en el orden de la lista (se cambia con ↑ ↓).
+    //   5. Puedes forzar a mano el trazo de un cliente desde su marcador.
+
+    const TRAZO_COLORES = [
+        "#e11d48", "#2563eb", "#059669", "#d97706",
+        "#7c3aed", "#0891b2", "#be123c", "#4d7c0f"
+    ];
+    const COLOR_SIN_TRAZO = "#94a3b8";
+
+    // Margen para decidir que dos pasadas del mismo trazo están "igual de cerca".
+    const PRIMERA_PASADA_M = 10;
+
+    const CLAVE_TRAZOS_ACTUAL = "gpstrack.trazos.actual";
+    const CLAVE_TRAZOS_GUARDADOS = "gpstrack.trazos.guardados";
+
+    let trazos = [];                 // { id, nombre, color, puntos: [[lat, lon], ...] }
+    let asignacionesManuales = {};   // nombre del cliente -> id del trazo
+    let siguienteIdTrazo = 1;
+
+    const capaTrazos = L.layerGroup().addTo(map);
+
+    const edicion = {
+        activa: false,
+        trazo: null,
+        original: null,
+        esNuevo: false,
+        reordenar: false,
+        ultimoArrastre: 0,
+        capa: L.layerGroup()
+    };
+
+    const listaTrazosElement = document.getElementById("listaTrazos");
+    const selTrazosGuardados = document.getElementById("selTrazosGuardados");
+    const inputTrazos = document.getElementById("inputTrazos");
+
+    // ---------- Control flotante sobre el mapa mientras dibujas ----------
+
+    const ControlDibujo = L.Control.extend({
+        options: { position: "topleft" },
+        onAdd: function () {
+            const div = L.DomUtil.create("div", "control-dibujo");
+            div.innerHTML = `
+                <div class="cd-texto" id="cdTexto"></div>
+                <div class="cd-botones">
+                    <button type="button" id="cdDeshacer">↩️ Deshacer punto</button>
+                    <button type="button" id="cdTerminar" class="cd-ok">✔️ Terminar</button>
+                    <button type="button" id="cdCancelar">✖️ Cancelar</button>
+                </div>
+            `;
+            L.DomEvent.disableClickPropagation(div);
+            L.DomEvent.disableScrollPropagation(div);
+            div.style.display = "none";
+            return div;
+        }
+    });
+
+    const controlDibujo = new ControlDibujo();
+    controlDibujo.addTo(map);
+
+    document.getElementById("cdDeshacer").addEventListener("click", () => {
+        if (!edicion.activa) return;
+        edicion.trazo.puntos.pop();
+        redibujarEdicion();
+    });
+    document.getElementById("cdTerminar").addEventListener("click", () => terminarEdicion(true));
+    document.getElementById("cdCancelar").addEventListener("click", () => terminarEdicion(false));
+
+    // ---------- Utilidades de geometría ----------
+
+    function largoTrazo(t) {
+        let d = 0;
+        for (let i = 1; i < t.puntos.length; i++) {
+            const a = t.puntos[i - 1], b = t.puntos[i];
+            d += calcularDistanciaMetros(a[0], a[1], b[0], b[1]);
+        }
+        return d;
+    }
+
+    // Proyección local ida y vuelta (metros <-> lat/lon).
+    function crearProyeccionDoble(puntos) {
+
+        const lat0 = puntos.reduce((s, p) => s + p.lat, 0) / puntos.length;
+        const lon0 = puntos.reduce((s, p) => s + p.lon, 0) / puntos.length;
+        const kx = 111320 * Math.cos(lat0 * Math.PI / 180);
+        const ky = 110540;
+
+        return {
+            aXY: (lat, lon) => ({ x: (lon - lon0) * kx, y: (lat - lat0) * ky }),
+            aLL: (x, y) => [lat0 + y / ky, lon0 + x / kx]
+        };
+    }
+
+    function prepararTrazoXY(t, aXY) {
+        const P = t.puntos.map(p => aXY(p[0], p[1]));
+        const acum = [0];
+        for (let i = 1; i < P.length; i++) acum.push(acum[i - 1] + dist2D(P[i - 1], P[i]));
+        return { P, acum };
+    }
+
+    // Punto del trazo más cercano al cliente y cuántos metros de trazo lleva hasta ahí.
+    function proyectarEnTrazo(pt, g) {
+
+        const opciones = [];
+
+        for (let i = 0; i < g.P.length - 1; i++) {
+
+            const a = g.P[i], b = g.P[i + 1];
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const L2 = dx * dx + dy * dy;
+
+            let t = L2 > 0 ? ((pt.x - a.x) * dx + (pt.y - a.y) * dy) / L2 : 0;
+            t = Math.max(0, Math.min(1, t));
+
+            const q = { x: a.x + t * dx, y: a.y + t * dy };
+
+            opciones.push({
+                d: dist2D(pt, q),
+                along: g.acum[i] + t * Math.sqrt(L2),
+                q
+            });
+        }
+
+        const dMin = Math.min(...opciones.map(o => o.d));
+
+        // Primera pasada: entre los tramos casi igual de cercanos, el que llega antes.
+        const elegido = opciones
+            .filter(o => o.d <= dMin + PRIMERA_PASADA_M)
+            .sort((x, y) => x.along - y.along)[0];
+
+        return { dMin, along: elegido.along, q: elegido.q };
+    }
+
+    // ---------- Ordenar según los trazos ----------
+
+    document.getElementById("btnOrdenarTrazos")
+        .addEventListener("click", () => ordenarPorTrazos(false));
+
+    function ordenarPorTrazos(silencioso) {
+
+        if (edicion.activa) {
+            statusElement.textContent = "✏️ Termina o cancela el trazo que estás dibujando antes de ordenar.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        if (!trazos.length) {
+            statusElement.textContent = "⚠️ Primero dibuja al menos un trazo con ✏️ Nuevo trazo.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        const tol = Math.max(5, parseFloat(document.getElementById("trazoTol").value) || 40);
+
+        const filtro = normalizarEncabezado(buscadorInput.value || "");
+
+        const objetivos = clientes.filter(c =>
+            c.valido && !c.visitado && normalizarEncabezado(c.nombre).includes(filtro)
+        );
+
+        if (!objetivos.length) {
+            statusElement.textContent = "⚠️ No hay clientes pendientes con coordenadas válidas para ordenar.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        prepararNuevasRutas();
+
+        const referencia = objetivos.concat(
+            trazos.flatMap(t => t.puntos.map(p => ({ lat: p[0], lon: p[1] })))
+        );
+        const { aXY, aLL } = crearProyeccionDoble(referencia);
+
+        const geometrias = trazos.map(t => prepararTrazoXY(t, aXY));
+        const porTrazo = trazos.map(() => []);
+        const sinTrazo = [];
+        let forzados = 0;
+
+        objetivos.forEach(c => {
+
+            const pt = aXY(c.lat, c.lon);
+            let mejor = null;
+
+            const idxManual = trazos.findIndex(t => t.id === asignacionesManuales[c.nombre]);
+
+            if (idxManual >= 0) {
+                mejor = { ...proyectarEnTrazo(pt, geometrias[idxManual]), i: idxManual, manual: true };
+                forzados++;
+            } else {
+                geometrias.forEach((g, i) => {
+                    const pr = proyectarEnTrazo(pt, g);
+                    if (!mejor || pr.dMin < mejor.dMin - 0.01) mejor = { ...pr, i };
+                });
+            }
+
+            if (!mejor || (!mejor.manual && mejor.dMin > tol)) {
+                c._proyLL = null;
+                sinTrazo.push(c);
+                return;
+            }
+
+            c._proyLL = aLL(mejor.q.x, mejor.q.y);
+            porTrazo[mejor.i].push({ cliente: c, along: mejor.along });
+        });
+
+        const rutas = [];
+        let trazosVacios = 0;
+
+        trazos.forEach((t, i) => {
+            const items = porTrazo[i].sort((a, b) => a.along - b.along);
+            if (items.length) {
+                rutas.push({ tipo: "trazo", trazo: t, puntos: items, franjas: 0 });
+            } else {
+                trazosVacios++;
+            }
+        });
+
+        if (sinTrazo.length) {
+
+            const pts = sinTrazo.map(c => ({ cliente: c, ...aXY(c.lat, c.lon) }));
+
+            const ultimaRuta = rutas[rutas.length - 1];
+            const ultimo = ultimaRuta ? ultimaRuta.puntos[ultimaRuta.puntos.length - 1].cliente : null;
+
+            rutas.push({
+                tipo: "sin",
+                puntos: rutaVecinoMasCercano(pts, ultimo ? aXY(ultimo.lat, ultimo.lon) : null),
+                franjas: 0
+            });
+        }
+
+        serp.tolTrazo = tol;
+
+        const hayGPS = document.getElementById("serpDesdeGPS").checked && userLat !== null && userLon !== null;
+
+        finalizarRutas(rutas, "trazos", hayGPS);
+
+        const conTrazo = objetivos.length - sinTrazo.length;
+
+        statusElement.textContent =
+            `✅ ${conTrazo} cliente(s) ordenados en ${rutas.filter(r => r.tipo === "trazo").length} trazo(s)` +
+            (forzados ? ` (${forzados} asignado(s) a mano)` : "") +
+            (sinTrazo.length ? ` · ⚪ ${sinTrazo.length} sin trazo (a más de ${tol} m)` : "") +
+            (trazosVacios ? ` · ${trazosVacios} trazo(s) sin clientes cerca` : "") + ".";
+        statusElement.className = sinTrazo.length ? "status warning" : "status success";
+
+        if (!silencioso) {
+            const limites = L.latLngBounds(objetivos.map(c => [c.lat, c.lon]));
+            trazos.forEach(t => t.puntos.forEach(p => limites.extend(p)));
+            map.fitBounds(limites, { padding: [40, 40] });
+        }
+    }
+
+    function reordenarSiHaceFalta() {
+        if (serp.activa && serp.modo === "trazos" && !edicion.activa) ordenarPorTrazos(true);
+    }
+
+    // ---------- Dibujar trazos (vista normal) ----------
+
+    function dibujarTrazos() {
+
+        capaTrazos.clearLayers();
+
+        trazos.forEach((t, i) => {
+
+            if (edicion.activa && edicion.trazo === t) return;
+            if (t.puntos.length < 2) return;
+
+            L.polyline(t.puntos, {
+                color: t.color,
+                weight: 4,
+                opacity: 0.75,
+                dashArray: "10, 6"
+            })
+                .bindPopup(`<b>✏️ ${escapeHTML(t.nombre)}</b>Orden ${i + 1} · ${formatearDistancia(largoTrazo(t))}`)
+                .addTo(capaTrazos);
+
+            dibujarFlechas(t.puntos, t.color, capaTrazos);
+
+            L.marker(t.puntos[0], {
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: "trazo-inicio",
+                    html: `<div style="--c:${t.color}">T${i + 1}</div>`,
+                    iconSize: [28, 20],
+                    iconAnchor: [14, 10]
+                })
+            }).addTo(capaTrazos);
+        });
+    }
+
+    // ---------- Lista de trazos (en la cabecera) ----------
+
+    function renderizarListaTrazos() {
+
+        if (!trazos.length) {
+            listaTrazosElement.innerHTML =
+                '<div class="trazos-vacio">Aún no hay trazos. Pulsa <b>✏️ Nuevo trazo</b> y toca el mapa por donde caminas, empezando por donde quieres iniciar la entrega.</div>';
+            return;
+        }
+
+        const nClientes = id => {
+            const r = serp.activa && serp.modo === "trazos"
+                ? serp.rutas.find(x => x.tipo === "trazo" && x.trazo.id === id)
+                : null;
+            return r ? ` · ${r.clientes.length} cliente(s)` : "";
+        };
+
+        listaTrazosElement.innerHTML = trazos.map((t, i) => `
+            <div class="trazo-item" style="--c:${t.color}">
+                <span class="trazo-num">${i + 1}</span>
+                <span class="trazo-nombre">${escapeHTML(t.nombre)}
+                    <small>${formatearDistancia(largoTrazo(t))}${nClientes(t.id)}</small>
+                </span>
+                <span class="trazo-acciones">
+                    <button type="button" data-trazo="${i}" data-t="subir" title="Recorrer antes" ${i === 0 ? "disabled" : ""}>↑</button>
+                    <button type="button" data-trazo="${i}" data-t="bajar" title="Recorrer después" ${i === trazos.length - 1 ? "disabled" : ""}>↓</button>
+                    <button type="button" data-trazo="${i}" data-t="invertir" title="Invertir el sentido">⇄</button>
+                    <button type="button" data-trazo="${i}" data-t="ver" title="Ver en el mapa">🔍</button>
+                    <button type="button" data-trazo="${i}" data-t="editar" title="Editar puntos">✏️</button>
+                    <button type="button" data-trazo="${i}" data-t="nombre" title="Cambiar nombre">🏷️</button>
+                    <button type="button" data-trazo="${i}" data-t="borrar" title="Borrar trazo">🗑️</button>
+                </span>
+            </div>
+        `).join("");
+
+        listaTrazosElement.querySelectorAll("button[data-trazo]").forEach(b => {
+            b.addEventListener("click", () => accionTrazo(+b.getAttribute("data-trazo"), b.getAttribute("data-t")));
+        });
+    }
+
+    function accionTrazo(i, accion) {
+
+        const t = trazos[i];
+        if (!t) return;
+
+        if (edicion.activa) {
+            statusElement.textContent = "✏️ Termina o cancela el trazo que estás dibujando primero.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        if (accion === "subir" && i > 0) {
+            [trazos[i - 1], trazos[i]] = [trazos[i], trazos[i - 1]];
+        } else if (accion === "bajar" && i < trazos.length - 1) {
+            [trazos[i + 1], trazos[i]] = [trazos[i], trazos[i + 1]];
+        } else if (accion === "invertir") {
+            t.puntos.reverse();
+        } else if (accion === "ver") {
+            map.fitBounds(L.latLngBounds(t.puntos), { padding: [40, 40], maxZoom: 18 });
+            return;
+        } else if (accion === "editar") {
+            iniciarEdicion(t, false);
+            return;
+        } else if (accion === "nombre") {
+            const nuevo = prompt("Nombre del trazo:", t.nombre);
+            if (!nuevo || !nuevo.trim()) return;
+            t.nombre = nuevo.trim();
+        } else if (accion === "borrar") {
+            if (!confirm(`¿Borrar "${t.nombre}"?`)) return;
+            trazos.splice(i, 1);
+            Object.keys(asignacionesManuales).forEach(k => {
+                if (asignacionesManuales[k] === t.id) delete asignacionesManuales[k];
+            });
+        }
+
+        guardarTrazosLocal();
+        dibujarTrazos();
+
+        if (serp.activa && serp.modo === "trazos") {
+            if (trazos.length) {
+                ordenarPorTrazos(true);
+            } else {
+                limpiarRutasSerpentina(true);
+            }
+        }
+
+        renderizarListaTrazos();
+    }
+
+    // ---------- Dibujar / editar un trazo ----------
+
+    document.getElementById("btnNuevoTrazo").addEventListener("click", () => {
+
+        if (edicion.activa) return;
+
+        const t = {
+            id: siguienteIdTrazo++,
+            nombre: `Trazo ${trazos.length + 1}`,
+            color: TRAZO_COLORES[trazos.length % TRAZO_COLORES.length],
+            puntos: []
+        };
+
+        iniciarEdicion(t, true);
+    });
+
+    function iniciarEdicion(t, esNuevo) {
+
+        // Si las rutas están armadas por trazos, se quitan mientras editas
+        // y se vuelven a ordenar al terminar.
+        edicion.reordenar = serp.activa && serp.modo === "trazos";
+
+        if (edicion.reordenar) {
+            limpiarRutasSerpentina(false);
+            actualizarDistanciasYLineas();
+            renderizarListaClientes();
+        }
+
+        edicion.activa = true;
+        edicion.trazo = t;
+        edicion.original = t.puntos.map(p => p.slice());
+        edicion.esNuevo = esNuevo;
+
+        map.doubleClickZoom.disable();
+        map.getContainer().classList.add("dibujando");
+        edicion.capa.addTo(map);
+        controlDibujo.getContainer().style.display = "";
+
+        dibujarTrazos();
+        redibujarEdicion();
+
+        statusElement.textContent = esNuevo
+            ? `✏️ Dibujando "${t.nombre}": toca el mapa por donde caminas, en el orden en que vas a entregar.`
+            : `✏️ Editando "${t.nombre}": arrastra un punto para moverlo, tócalo para borrarlo o toca el mapa para alargar el trazo.`;
+        statusElement.className = "status";
+    }
+
+    function redibujarEdicion() {
+
+        const t = edicion.trazo;
+        edicion.capa.clearLayers();
+
+        const linea = L.polyline(t.puntos, { color: t.color, weight: 5, opacity: 0.9 }).addTo(edicion.capa);
+
+        if (t.puntos.length > 1) dibujarFlechas(t.puntos, t.color, edicion.capa);
+
+        t.puntos.forEach((p, i) => {
+
+            const m = L.marker(p, {
+                draggable: true,
+                icon: L.divIcon({
+                    className: "vertice-icon" + (i === 0 ? " inicio" : ""),
+                    html: `<div style="--c:${t.color}">${i === 0 ? "▶" : ""}</div>`,
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(edicion.capa);
+
+            m.on("drag", e => {
+                const ll = e.target.getLatLng();
+                t.puntos[i] = [ll.lat, ll.lng];
+                linea.setLatLngs(t.puntos);
+            });
+
+            m.on("dragend", () => {
+                edicion.ultimoArrastre = Date.now();
+                redibujarEdicion();
+            });
+
+            // Tocar un punto (sin arrastrarlo) lo borra.
+            m.on("click", () => {
+                if (Date.now() - edicion.ultimoArrastre < 400) return;
+                t.puntos.splice(i, 1);
+                redibujarEdicion();
+            });
+        });
+
+        document.getElementById("cdTexto").innerHTML =
+            `<b>${escapeHTML(t.nombre)}</b> · ${t.puntos.length} punto(s) · ${formatearDistancia(largoTrazo(t))}<br>` +
+            `<small>Toca el mapa para agregar · arrastra para mover · toca un punto para borrarlo</small>`;
+    }
+
+    // Mientras dibujas, tocar un barrio u otra línea no abre su ventanita.
+    map.on("popupopen", e => {
+
+        if (edicion.activa) {
+            map.closePopup();
+            return;
+        }
+
+        // Al abrir un cliente, su lista de trazos se actualiza (por si creaste o renombraste trazos).
+        const c = clientes.find(x => x.marker && x.marker === e.popup._source);
+        if (c) e.popup.setContent(popupCliente(c));
+    });
+
+    map.on("click", e => {
+        if (!edicion.activa) return;
+        edicion.trazo.puntos.push([e.latlng.lat, e.latlng.lng]);
+        redibujarEdicion();
+    });
+
+    function terminarEdicion(guardar) {
+
+        if (!edicion.activa) return;
+
+        const t = edicion.trazo;
+
+        if (guardar && t.puntos.length < 2) {
+            statusElement.textContent = "⚠️ Un trazo necesita al menos 2 puntos. Toca el mapa para agregar más o pulsa Cancelar.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        if (!guardar) {
+            t.puntos = edicion.original;
+        } else if (edicion.esNuevo) {
+            trazos.push(t);
+        }
+
+        edicion.activa = false;
+        edicion.trazo = null;
+        edicion.capa.clearLayers();
+        map.removeLayer(edicion.capa);
+        controlDibujo.getContainer().style.display = "none";
+        map.doubleClickZoom.enable();
+        map.getContainer().classList.remove("dibujando");
+
+        guardarTrazosLocal();
+        dibujarTrazos();
+
+        if (edicion.reordenar) {
+            edicion.reordenar = false;
+            ordenarPorTrazos(true);
+        } else {
+            statusElement.textContent = guardar
+                ? `✅ "${t.nombre}" guardado (${formatearDistancia(largoTrazo(t))}). Pulsa 📍 Ordenar según mis trazos cuando tengas todos.`
+                : "✖️ Cambios del trazo descartados.";
+            statusElement.className = guardar ? "status success" : "status";
+        }
+
+        renderizarListaTrazos();
+    }
+
+    // ---------- Asignar un cliente a un trazo a mano (desde su marcador) ----------
+
+    function popupCliente(c) {
+
+        let html =
+            `<b>👤 ${escapeHTML(c.nombre)}</b>` +
+            `Lat: ${c.lat.toFixed(7)}<br>` +
+            `Lon: ${c.lon.toFixed(7)}`;
+
+        if (c.distancia !== null && c.distancia !== undefined) {
+            html += `<br>📏 Distancia: ${formatearDistancia(c.distancia)}`;
+        }
+
+        if (c.rutaSerp) {
+            html += `<br>${iconoRuta(c.rutaSerp)} ${escapeHTML(c.rutaSerp.nombre)} · Parada ${c.paradaSerp}`;
+        }
+
+        if (trazos.length) {
+
+            const actual = asignacionesManuales[c.nombre];
+
+            html += `
+                <div class="popup-mover">
+                    <label>Asignar a trazo:
+                        <select class="select-mover-trazo" data-uid="${c.uid}">
+                            <option value="">Automático (el más cercano)</option>
+                            ${trazos.map(t => `<option value="${t.id}"${t.id === actual ? " selected" : ""}>${escapeHTML(t.nombre)}</option>`).join("")}
+                        </select>
+                    </label>
+                </div>
+            `;
+        }
+
+        return html;
+    }
+
+    function refrescarPopupCliente(c) {
+
+        if (!c.marker) return;
+
+        const html = popupCliente(c);
+
+        if (c.marker.getPopup()) {
+            c.marker.setPopupContent(html);
+        } else {
+            c.marker.bindPopup(html);
+        }
+    }
+
+    document.addEventListener("change", e => {
+
+        const sel = e.target.closest ? e.target.closest(".select-mover-trazo") : null;
+        if (!sel) return;
+
+        const c = clientes.find(x => x.uid === +sel.getAttribute("data-uid"));
+        if (!c) return;
+
+        const id = sel.value ? +sel.value : null;
+        const trazo = trazos.find(t => t.id === id);
+
+        if (trazo) {
+            asignacionesManuales[c.nombre] = id;
+        } else {
+            delete asignacionesManuales[c.nombre];
+        }
+
+        guardarTrazosLocal();
+
+        if (serp.activa && serp.modo === "trazos") {
+            map.closePopup();
+            ordenarPorTrazos(true);
+            statusElement.textContent = trazo
+                ? `✅ ${c.nombre} ahora va en "${trazo.nombre}" (parada ${c.paradaSerp}).`
+                : `✅ ${c.nombre} vuelve a asignarse al trazo más cercano.`;
+            statusElement.className = "status success";
+        } else {
+            statusElement.textContent = "✅ Asignación guardada. Se aplica al pulsar 📍 Ordenar según mis trazos.";
+            statusElement.className = "status success";
+        }
+    });
+
+    // ---------- Guardar en el celular ----------
+
+    function estadoTrazos() {
+        return {
+            trazos: trazos.map(t => ({ id: t.id, nombre: t.nombre, color: t.color, puntos: t.puntos })),
+            manuales: asignacionesManuales
+        };
+    }
+
+    function aplicarEstadoTrazos(estado) {
+
+        trazos = (estado && Array.isArray(estado.trazos) ? estado.trazos : [])
+            .filter(t => Array.isArray(t.puntos) && t.puntos.length >= 2)
+            .map((t, i) => ({
+                id: typeof t.id === "number" ? t.id : i + 1,
+                nombre: t.nombre || `Trazo ${i + 1}`,
+                color: t.color || TRAZO_COLORES[i % TRAZO_COLORES.length],
+                puntos: t.puntos.map(p => [+p[0], +p[1]])
+            }));
+
+        asignacionesManuales = (estado && estado.manuales) || {};
+        siguienteIdTrazo = trazos.reduce((m, t) => Math.max(m, t.id), 0) + 1;
+
+        dibujarTrazos();
+        renderizarListaTrazos();
+    }
+
+    function guardarTrazosLocal() {
+        try {
+            localStorage.setItem(CLAVE_TRAZOS_ACTUAL, JSON.stringify(estadoTrazos()));
+        } catch (err) {
+            // Sin almacenamiento (modo privado): los trazos duran mientras la página esté abierta.
+        }
+    }
+
+    function leerGuardados() {
+        try {
+            return JSON.parse(localStorage.getItem(CLAVE_TRAZOS_GUARDADOS) || "{}") || {};
+        } catch (err) {
+            return {};
+        }
+    }
+
+    function renderizarSelectGuardados() {
+
+        const guardados = leerGuardados();
+        const nombres = Object.keys(guardados).sort();
+
+        selTrazosGuardados.innerHTML =
+            `<option value="">📂 Trazos guardados${nombres.length ? ` (${nombres.length})` : ""}…</option>` +
+            nombres.map(n => `<option value="${escapeHTML(n)}">${escapeHTML(n)} · ${guardados[n].trazos.length} trazo(s)</option>`).join("") +
+            (nombres.length ? `<option value="__borrar__">🗑️ Borrar un conjunto guardado…</option>` : "");
+    }
+
+    document.getElementById("btnGuardarTrazos").addEventListener("click", () => {
+
+        if (!trazos.length) {
+            statusElement.textContent = "⚠️ No hay trazos para guardar.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        const nombre = prompt("Nombre para este conjunto de trazos (por ejemplo: Caldas – recibos):", "");
+        if (!nombre || !nombre.trim()) return;
+
+        const guardados = leerGuardados();
+
+        if (guardados[nombre.trim()] && !confirm(`Ya existe "${nombre.trim()}". ¿Reemplazarlo?`)) return;
+
+        guardados[nombre.trim()] = estadoTrazos();
+
+        try {
+            localStorage.setItem(CLAVE_TRAZOS_GUARDADOS, JSON.stringify(guardados));
+            statusElement.textContent = `💾 Trazos guardados como "${nombre.trim()}" en este celular.`;
+            statusElement.className = "status success";
+        } catch (err) {
+            statusElement.textContent = "❌ No se pudo guardar en este navegador. Usa 📤 Exportar KML para no perderlos.";
+            statusElement.className = "status error";
+        }
+
+        renderizarSelectGuardados();
+    });
+
+    selTrazosGuardados.addEventListener("change", () => {
+
+        const valor = selTrazosGuardados.value;
+        selTrazosGuardados.value = "";
+
+        if (!valor) return;
+
+        const guardados = leerGuardados();
+
+        if (valor === "__borrar__") {
+            const nombre = prompt("Escribe el nombre exacto del conjunto que quieres borrar:\n" + Object.keys(guardados).join("\n"), "");
+            if (nombre && guardados[nombre]) {
+                delete guardados[nombre];
+                try { localStorage.setItem(CLAVE_TRAZOS_GUARDADOS, JSON.stringify(guardados)); } catch (err) { /* sin almacenamiento */ }
+                statusElement.textContent = `🗑️ Conjunto "${nombre}" borrado.`;
+                statusElement.className = "status";
+            }
+            renderizarSelectGuardados();
+            return;
+        }
+
+        if (!guardados[valor]) return;
+
+        if (edicion.activa) terminarEdicion(false);
+
+        aplicarEstadoTrazos(guardados[valor]);
+        guardarTrazosLocal();
+
+        statusElement.textContent = `📂 Cargados ${trazos.length} trazo(s) de "${valor}".`;
+        statusElement.className = "status success";
+
+        if (serp.activa && serp.modo === "trazos") ordenarPorTrazos(true);
+
+        if (trazos.length) {
+            const limites = L.latLngBounds(trazos[0].puntos);
+            trazos.forEach(t => t.puntos.forEach(p => limites.extend(p)));
+            map.fitBounds(limites, { padding: [40, 40] });
+        }
+    });
+
+    document.getElementById("btnBorrarTrazos").addEventListener("click", () => {
+
+        if (!trazos.length) return;
+        if (!confirm("¿Borrar todos los trazos de la pantalla? (Los conjuntos guardados no se borran.)")) return;
+
+        if (edicion.activa) terminarEdicion(false);
+
+        trazos = [];
+        asignacionesManuales = {};
+        guardarTrazosLocal();
+        dibujarTrazos();
+        renderizarListaTrazos();
+
+        if (serp.activa && serp.modo === "trazos") limpiarRutasSerpentina(true);
+    });
+
+    // ---------- Exportar / importar KML ----------
+
+    document.getElementById("btnExportarTrazos").addEventListener("click", () => {
+
+        if (!trazos.length) {
+            statusElement.textContent = "⚠️ No hay trazos para exportar.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        // KML usa el color al revés: aabbggrr.
+        const colorKML = hex => {
+            const h = hex.replace("#", "");
+            return "ff" + h.slice(4, 6) + h.slice(2, 4) + h.slice(0, 2);
+        };
+
+        const xml = s => String(s).replace(/[<>&"]/g, ch => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[ch]));
+
+        const kml =
+            '<?xml version="1.0" encoding="UTF-8"?>\n' +
+            '<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Trazos GPS Track</name>\n' +
+            trazos.map((t, i) =>
+                `<Style id="t${i}"><LineStyle><color>${colorKML(t.color)}</color><width>4</width></LineStyle></Style>\n` +
+                `<Placemark><name>${xml(t.nombre)}</name><description>Orden ${i + 1}</description>` +
+                `<styleUrl>#t${i}</styleUrl><LineString><tessellate>1</tessellate><coordinates>` +
+                t.puntos.map(p => `${p[1].toFixed(7)},${p[0].toFixed(7)},0`).join(" ") +
+                `</coordinates></LineString></Placemark>`
+            ).join("\n") +
+            "\n</Document></kml>";
+
+        const blob = new Blob([kml], { type: "application/vnd.google-earth.kml+xml" });
+        const enlace = document.createElement("a");
+        const fecha = new Date().toISOString().slice(0, 10);
+
+        enlace.href = URL.createObjectURL(blob);
+        enlace.download = `trazos_${fecha}.kml`;
+        document.body.appendChild(enlace);
+        enlace.click();
+        enlace.remove();
+        setTimeout(() => URL.revokeObjectURL(enlace.href), 3000);
+
+        statusElement.textContent = `📤 ${trazos.length} trazo(s) exportados a KML.`;
+        statusElement.className = "status success";
+    });
+
+    document.getElementById("btnImportarTrazos").addEventListener("click", () => inputTrazos.click());
+
+    inputTrazos.addEventListener("change", async (evento) => {
+
+        const archivo = evento.target.files[0];
+        inputTrazos.value = "";
+        if (!archivo) return;
+
+        try {
+
+            if (typeof toGeoJSON === "undefined") {
+                throw new Error("no cargó la librería para leer KML (revisa tu conexión)");
+            }
+
+            const bytes = new Uint8Array(await archivo.slice(0, 4).arrayBuffer());
+            let texto;
+
+            if (bytes[0] === 0x50 && bytes[1] === 0x4b) {
+                const zip = await JSZip.loadAsync(await archivo.arrayBuffer());
+                const nombreKml = Object.keys(zip.files).find(n => n.toLowerCase().endsWith(".kml"));
+                if (!nombreKml) throw new Error("el KMZ no contiene ningún .kml");
+                texto = await zip.files[nombreKml].async("string");
+            } else {
+                texto = await archivo.text();
+            }
+
+            const geo = toGeoJSON.kml(new DOMParser().parseFromString(texto, "text/xml"));
+            const nuevos = [];
+
+            const agregarLinea = (coords, props) => {
+                if (!coords || coords.length < 2) return;
+                const i = trazos.length + nuevos.length;
+                nuevos.push({
+                    id: siguienteIdTrazo++,
+                    nombre: (props && props.name) || `Trazo ${i + 1}`,
+                    color: (props && /^#[0-9a-f]{6}$/i.test(props.stroke || "")) ? props.stroke : TRAZO_COLORES[i % TRAZO_COLORES.length],
+                    puntos: coords.map(c => [c[1], c[0]])
+                });
+            };
+
+            const recorrer = (geom, props) => {
+                if (!geom) return;
+                if (geom.type === "LineString") agregarLinea(geom.coordinates, props);
+                else if (geom.type === "MultiLineString") geom.coordinates.forEach(c => agregarLinea(c, props));
+                else if (geom.type === "GeometryCollection") geom.geometries.forEach(g => recorrer(g, props));
+            };
+
+            (geo.features || []).forEach(f => recorrer(f.geometry, f.properties));
+
+            if (!nuevos.length) throw new Error("el archivo no tiene líneas (trazos)");
+
+            if (edicion.activa) terminarEdicion(false);
+
+            if (trazos.length && confirm(`Se encontraron ${nuevos.length} trazo(s).\n\nAceptar = REEMPLAZAR los trazos actuales.\nCancelar = AGREGARLOS a los actuales.`)) {
+                trazos = [];
+                asignacionesManuales = {};
+            }
+
+            trazos = trazos.concat(nuevos);
+
+            guardarTrazosLocal();
+            dibujarTrazos();
+            renderizarListaTrazos();
+
+            const limites = L.latLngBounds(nuevos[0].puntos);
+            nuevos.forEach(t => t.puntos.forEach(p => limites.extend(p)));
+            map.fitBounds(limites, { padding: [40, 40] });
+
+            statusElement.textContent = `📥 ${nuevos.length} trazo(s) importados.`;
+            statusElement.className = "status success";
+
+            reordenarSiHaceFalta();
+
+        } catch (err) {
+            statusElement.textContent = "❌ No se pudieron importar los trazos: " + err.message;
+            statusElement.className = "status error";
+        }
+    });
+
+    // ---------- Al abrir la página: recuperar los últimos trazos ----------
+
+    try {
+        const guardado = localStorage.getItem(CLAVE_TRAZOS_ACTUAL);
+        if (guardado) aplicarEstadoTrazos(JSON.parse(guardado));
+    } catch (err) {
+        // Sin almacenamiento o datos dañados: se empieza sin trazos.
+    }
+
+    renderizarListaTrazos();
+    renderizarSelectGuardados();
 
     // ==========================================================
     // MOSTRAR POSICIÓN DEL USUARIO
