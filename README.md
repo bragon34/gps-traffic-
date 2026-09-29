@@ -4,6 +4,19 @@ Página web para ubicar clientes en un mapa, medir la distancia desde tu posici�
 
 ---
 
+## V1.13 — Ocultar URL y contra de conexión
+
+**Archivo:** `index_V1.13.html`
+
+- 🙈 La URL y la clave se escriben en campos **ocultos**  El botón **👁 Mostrar** las deja ver 15 segundos para revisar errores de tipeo.
+- 🔒 Al conectar, **se esconde toda la configuración**. Solo se ve "🟢 Conectado".
+- ⚙️ Botón **Cambiar conexión** para volver a ver o editar la configuración.
+- 🚪 Botón **Desconectar y olvidar**: borra la URL y la clave del dispositivo.
+- ☑️ Casilla **Recordar en este dispositivo**. Si la desmarcas, hay que escribir los datos cada vez que se abre la página.
+
+
+---
+
 ## V1.12 — Conexión directa con Google Sheets
 
 **Archivos:** `index_V1.12.html` + `Codigo.gs`
@@ -16,7 +29,7 @@ Página web para ubicar clientes en un mapa, medir la distancia desde tu posici�
 - 👥 Si el código está **repetido**, muestra todas las filas (con datos de A, B y D) para elegir la correcta.
 - ⚠️ Pide confirmación si la celda AA ya tenía un GPS.
 - 🛡️ Antes de escribir, verifica que la fila siga teniendo el mismo código (por si alguien movió filas).
-- 🔑 Protegido con una **clave**. La URL y la clave se recuerdan en el teléfono y la página se reconecta sola.
+
 
 **Instalación (una vez):**
 1. Google Sheet → **Extensiones → Apps Script** → pegar `Codigo.gs` y cambiar `CLAVE`.
