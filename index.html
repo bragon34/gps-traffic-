@@ -592,7 +592,8 @@
 
                     <div class="excel-acciones">
                         <button class="btn excel" id="btnConectarSheet">🔌 Conectar</button>
-                        <button class="btn secondary" id="btnVerDatos" type="button">👁 Mostrar</button>
+                        <button class="btn secondary" id="btnVerDatos" type="button">👁 Mostrar (1 vez)</button>
+                        <button class="btn secondary" id="btnCancelarCambio" type="button" style="display:none">✖ Cancelar</button>
                         <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:#334155; margin:0">
                             <input type="checkbox" id="sheetRecordar" checked> Recordar en este dispositivo
                         </label>
@@ -2090,8 +2091,13 @@
     function leerGuardado(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
     function guardarLocal(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
 
-    sheetURLInput.value = SHEET_URL_FIJA || leerGuardado("gpsTrack.sheetURL");
-    sheetClaveInput.value = SHEET_CLAVE_FIJA || leerGuardado("gpsTrack.sheetClave");
+    // Credenciales en uso: viven SOLO en memoria (y en el almacenamiento del
+    // dispositivo si se marca "Recordar"). Nunca se vuelven a poner en los
+    // campos de la pantalla después de conectar.
+    let credSheet = {
+        url: SHEET_URL_FIJA || leerGuardado("gpsTrack.sheetURL"),
+        clave: SHEET_CLAVE_FIJA || leerGuardado("gpsTrack.sheetClave")
+    };
 
     function mensajeExcel(texto, tipo) {
         statusElement.textContent = texto;
@@ -2104,9 +2110,10 @@
 
     // Llamada al Apps Script. Se usa POST con "text/plain" para evitar
     // el bloqueo CORS del navegador (Apps Script no acepta preflight).
-    async function llamarSheet(datos) {
+    async function llamarSheet(datos, credPrueba) {
 
-        const url = sheetURLInput.value.trim();
+        const cred = credPrueba || credSheet;
+        const url = (cred.url || "").trim();
 
         if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)) {
             throw new Error("La URL no parece de Apps Script (debe empezar por https://script.google.com/...)");
@@ -2115,7 +2122,7 @@
         const respuesta = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ ...datos, clave: sheetClaveInput.value.trim() })
+            body: JSON.stringify({ ...datos, clave: (cred.clave || "").trim() })
         });
 
         const texto = await respuesta.text();
@@ -2132,25 +2139,34 @@
         return json;
     }
 
-    btnConectarSheet.addEventListener("click", async () => {
+    // credNuevas = lo escrito en los campos; null = usar las guardadas.
+    async function conectarSheet(credNuevas) {
 
         mensajeExcel("🔌 Conectando con Google Sheets...", "");
         btnConectarSheet.disabled = true;
 
         try {
 
-            const r = await llamarSheet({ accion: "hojas" });
+            const r = await llamarSheet({ accion: "hojas" }, credNuevas);
 
-            if (sheetRecordar.checked) {
-                guardarLocal("gpsTrack.sheetURL", sheetURLInput.value.trim());
-                guardarLocal("gpsTrack.sheetClave", sheetClaveInput.value.trim());
-            } else {
-                borrarLocal("gpsTrack.sheetURL");
-                borrarLocal("gpsTrack.sheetClave");
+            if (credNuevas) {
+
+                credSheet = credNuevas;
+
+                if (sheetRecordar.checked) {
+                    guardarLocal("gpsTrack.sheetURL", credNuevas.url);
+                    guardarLocal("gpsTrack.sheetClave", credNuevas.clave);
+                } else {
+                    borrarLocal("gpsTrack.sheetURL");
+                    borrarLocal("gpsTrack.sheetClave");
+                }
             }
 
+            // Borrar lo escrito de la pantalla: ya no se puede volver a ver.
+            limpiarCamposCredenciales();
+
             sheetConectado = true;
-            mostrarConfigSheet(false); // ocultar URL y clave
+            mostrarConfigSheet(false);
             filaExcelSeleccionada = null;
             excelResultados.innerHTML = "";
 
@@ -2158,7 +2174,6 @@
                 .map(h => `<option value="${escapeHTML(h)}">${escapeHTML(h)}</option>`)
                 .join("");
 
-            // Recordar la última hoja usada.
             const ultimaHoja = leerGuardado("gpsTrack.sheetHoja");
             if (ultimaHoja && r.hojas.includes(ultimaHoja)) excelHoja.value = ultimaHoja;
 
@@ -2166,55 +2181,112 @@
             excelCodigo.disabled = false;
 
             mensajeExcel("✅ Conectado a \"" + r.archivo + "\" (" + r.hojas.length + " hoja(s)). Busca el código del cliente.", "success");
-            excelCodigo.focus();
 
         } catch (err) {
-            sheetConectado = false;
+
+            // Si falló una conexión NUEVA, la anterior (si existía) sigue activa.
+            if (!credNuevas) sheetConectado = false;
             mensajeExcel("❌ No se pudo conectar: " + err.message, "error");
         }
 
         btnConectarSheet.disabled = false;
         actualizarEstadoExcel();
+    }
+
+    btnConectarSheet.addEventListener("click", () => {
+
+        const nuevas = { url: sheetURLInput.value.trim(), clave: sheetClaveInput.value.trim() };
+
+        if (!nuevas.url || !nuevas.clave) {
+            mensajeExcel("⚠️ Escribe la URL y la clave.", "warning");
+            return;
+        }
+
+        conectarSheet(nuevas);
     });
 
     // ----------------------------------------------------------
-    // OCULTAR / MOSTRAR LA CONFIGURACIÓN (URL y clave)
+    // OCULTAR LA CONFIGURACIÓN · "MOSTRAR" SOLO UNA VEZ
     // ----------------------------------------------------------
 
     const sheetConfig = document.getElementById("sheetConfig");
     const sheetConectadoBar = document.getElementById("sheetConectadoBar");
     const sheetRecordar = document.getElementById("sheetRecordar");
     const btnVerDatos = document.getElementById("btnVerDatos");
+    const btnCancelarCambio = document.getElementById("btnCancelarCambio");
+
+    // true cuando ya se usó "Mostrar" para lo escrito. Solo se reinicia
+    // si se BORRAN ambos campos y se escribe todo de nuevo.
+    let vistaUsada = false;
+    let temporizadorVista = null;
 
     function borrarLocal(k) { try { localStorage.removeItem(k); } catch (e) { } }
 
     function ocultarTexto() {
+        clearTimeout(temporizadorVista);
         sheetURLInput.type = "password";
         sheetClaveInput.type = "password";
-        btnVerDatos.textContent = "👁 Mostrar";
+        actualizarBotonVer();
+    }
+
+    function actualizarBotonVer() {
+        const visible = sheetClaveInput.type === "text";
+        btnVerDatos.disabled = vistaUsada && !visible;
+        btnVerDatos.textContent = visible ? "🙈 Ocultar"
+            : (vistaUsada ? "👁 Ya se mostró" : "👁 Mostrar (1 vez)");
+    }
+
+    function limpiarCamposCredenciales() {
+        sheetURLInput.value = "";
+        sheetClaveInput.value = "";
+        vistaUsada = false;
+        ocultarTexto();
     }
 
     function mostrarConfigSheet(mostrar) {
         sheetConfig.style.display = mostrar ? "" : "none";
         sheetConectadoBar.style.display = mostrar ? "none" : "";
+        btnCancelarCambio.style.display = (mostrar && sheetConectado) ? "" : "none";
         ocultarTexto();
     }
 
-    // Mostrar/ocultar temporalmente lo escrito (para revisar un error de tipeo).
     btnVerDatos.addEventListener("click", () => {
-        const visible = sheetClaveInput.type === "text";
-        if (visible) {
+
+        if (sheetClaveInput.type === "text") {
             ocultarTexto();
-        } else {
-            sheetURLInput.type = "text";
-            sheetClaveInput.type = "text";
-            btnVerDatos.textContent = "🙈 Ocultar";
-            setTimeout(ocultarTexto, 15000); // se vuelve a ocultar sola
+            return;
         }
+
+        if (vistaUsada) return;
+
+        vistaUsada = true;
+        sheetURLInput.type = "text";
+        sheetClaveInput.type = "text";
+        actualizarBotonVer();
+        temporizadorVista = setTimeout(ocultarTexto, 15000); // se oculta sola
     });
 
+    // Si se borran AMBOS campos, se permite volver a mostrar lo nuevo que se escriba.
+    [sheetURLInput, sheetClaveInput].forEach(campo => {
+        campo.addEventListener("input", () => {
+            if (!sheetURLInput.value && !sheetClaveInput.value && vistaUsada) {
+                vistaUsada = false;
+                ocultarTexto();
+            }
+        });
+    });
+
+    // Cambiar conexión: los campos aparecen VACÍOS (hay que escribir todo de nuevo).
+    // La conexión actual sigue funcionando hasta que la nueva conecte bien.
     document.getElementById("btnCambiarConexion").addEventListener("click", () => {
+        limpiarCamposCredenciales();
         mostrarConfigSheet(true);
+        sheetURLInput.focus();
+    });
+
+    btnCancelarCambio.addEventListener("click", () => {
+        limpiarCamposCredenciales();
+        mostrarConfigSheet(false);
     });
 
     // Borra URL y clave del dispositivo y desconecta.
@@ -2225,8 +2297,8 @@
         borrarLocal("gpsTrack.sheetURL");
         borrarLocal("gpsTrack.sheetClave");
 
-        sheetURLInput.value = "";
-        sheetClaveInput.value = "";
+        credSheet = { url: "", clave: "" };
+        limpiarCamposCredenciales();
         sheetConectado = false;
         filaExcelSeleccionada = null;
         excelResultados.innerHTML = "";
@@ -2415,8 +2487,10 @@
     }
 
     // Conectar automáticamente si ya hay URL y clave guardadas.
-    if (sheetURLInput.value && sheetClaveInput.value) {
-        btnConectarSheet.click();
+    actualizarBotonVer();
+
+    if (credSheet.url && credSheet.clave) {
+        conectarSheet(null);
     }
 
     // ==========================================================
