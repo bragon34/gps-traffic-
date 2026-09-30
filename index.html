@@ -4667,6 +4667,8 @@
     // si se BORRAN ambos campos y se escribe todo de nuevo.
     let vistaUsada = false;
     let temporizadorVista = null;
+    // Segundos que se ven la URL y la clave al pulsar "Mostrar (1 vez)".
+    const SEGUNDOS_MOSTRAR = 60;
 
     function borrarLocal(k) { try { localStorage.removeItem(k); } catch (e) { } }
 
@@ -4711,7 +4713,7 @@
         sheetURLInput.type = "text";
         sheetClaveInput.type = "text";
         actualizarBotonVer();
-        temporizadorVista = setTimeout(ocultarTexto, 60000); // se oculta sola
+        temporizadorVista = setTimeout(ocultarTexto, SEGUNDOS_MOSTRAR * 1000); // se oculta sola
     });
 
     // Si se borran AMBOS campos, se permite volver a mostrar lo nuevo que se escriba.
