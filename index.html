@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
+<!-- GPS Track · versión V1.17 (funciona con Codigo.gs V1.17) -->
 <title>Clientes + Mi ubicación GPS</title>
 
 <!-- Leaflet -->
@@ -836,7 +837,7 @@
 
     .excel-resultados {
         margin-top: 10px;
-        max-height: 220px;
+        max-height: 420px;
         overflow-y: auto;
     }
 
@@ -863,6 +864,20 @@
         color: #64748b;
         font-size: 12px;
         margin-top: 2px;
+    }
+
+    .ficha-cliente {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 3px 18px;
+        margin: 6px 0 4px;
+        font-size: 13px;
+        color: #111827;
+        overflow-wrap: anywhere;
+    }
+
+    .ficha-cliente b {
+        color: #1f2937;
     }
 
     .excel-acciones {
@@ -949,7 +964,7 @@
 
     <div class="header">
 
-        <h1>📍 Clientes + Mi ubicación GPS</h1>
+        <h1>📍 Clientes + Mi ubicación GPS <small style="font-size:12px; color:#94a3b8; font-weight:normal">V1.17</small></h1>
 
         <p>
             Carga un CSV con columnas <strong>Nombre, lat, lon</strong> (puede tener también una columna
@@ -4502,6 +4517,8 @@
     const btnUsarMiGPS = document.getElementById("btnUsarMiGPS");
     const btnGuardarAA = document.getElementById("btnGuardarAA");
 
+    const VERSION_PAGINA = "V1.17";
+    let versionScript = "";           // la que informa Codigo.gs al conectar
     let sheetConectado = false;
     let filaExcelSeleccionada = null;   // { fila, codigo, gps }
     let ultimosResultadosExcel = [];
@@ -4604,7 +4621,14 @@
             excelCodigo.disabled = false;
             excelCampo.disabled = false;
 
-            mensajeExcel("✅ Conectado a \"" + r.archivo + "\" (" + r.hojas.length + " hoja(s)). Busca el cliente por código o nombre.", "success");
+            versionScript = r.version || "";
+            if (versionScript === VERSION_PAGINA) {
+                mensajeExcel("✅ Conectado a \"" + r.archivo + "\" (" + r.hojas.length + " hoja(s)) · script " + versionScript + ". Busca el cliente por código o nombre.", "success");
+            } else {
+                mensajeExcel("⚠️ Conectado a \"" + r.archivo + "\", pero el script publicado es " + (versionScript || "una versión antigua") +
+                    " y la página es " + VERSION_PAGINA + ". Publica Codigo.gs como Nueva versión o revisa la URL.", "warning");
+            }
+            actualizarEstadoExcel();
 
         } catch (err) {
 
@@ -4817,7 +4841,10 @@
         excelResultados.innerHTML = aviso + resultados.map(x => `
             <div class="excel-fila" data-fila="${x.fila}">
                 <div><b>Fila ${x.fila}</b> · Código: <b>${escapeHTML(x.codigo || "(sin código)")}</b></div>
-                <div class="meta">👤 ${x.nombre ? escapeHTML(x.nombre) : "<i>sin nombre en D</i>"}${x.extra && x.extra.filter(t => t).length ? " · " + x.extra.filter(t => t).map(escapeHTML).join(" · ") : ""}</div>
+                ${x.detalle && x.detalle.length
+                    ? `<div class="ficha-cliente">${x.detalle.map(([t, v]) =>
+                        `<div><b>${escapeHTML(t)}:</b> ${escapeHTML(v)}</div>`).join("")}</div>`
+                    : `<div class="meta">👤 ${x.nombre ? escapeHTML(x.nombre) : "<i>sin nombre en D</i>"}${x.extra && x.extra.filter(t => t).length ? " · " + x.extra.filter(t => t).map(escapeHTML).join(" · ") : ""}</div>`}
                 <div class="meta">📍 AA actual: ${x.gps ? escapeHTML(x.gps) : "<i>vacía</i>"}${x.formula ? " · ⚠️ tiene fórmula (no se puede escribir)" : ""}</div>
             </div>
         `).join("");
@@ -4925,7 +4952,7 @@
             return;
         }
 
-        excelInfo.textContent = "🟢 Conectado" + (haySeleccion
+        excelInfo.textContent = "🟢 Conectado" + (versionScript ? " (script " + versionScript + ")" : " (script antiguo)") + (haySeleccion
             ? " · Seleccionado: fila " + filaExcelSeleccionada.fila + " (código " + filaExcelSeleccionada.codigo +
               (filaExcelSeleccionada.nombre ? " · " + filaExcelSeleccionada.nombre : "") + ")"
             : "");
