@@ -4,6 +4,39 @@ Página web para ubicar clientes en un mapa, medir la distancia desde tu posici�
 
 ---
 
+## 🆕 Última versión: V1.18 — Iniciar ruta y progreso guardado
+
+**Archivo:** `ruta_gps_v1.18.html` (usa el mismo `Codigo.gs` V1.17, no hay que volver a publicarlo)
+
+**Visitados**
+- 🔴 Pin **rojo** al marcar visitado y azul otra vez con *Deshacer*. En rutas serpentina, el círculo se rellena con un tono oscuro del color de **su** ruta, con ✓.
+- ➖ Sin línea GPS hacia los visitados, tampoco al mostrar rutas ocultas o al usar *Quitar rutas*.
+- ⚠️ *Visitado* sin señal GPS pregunta antes de marcar.
+
+**▶ Iniciar ruta** (botón en cada ruta)
+- 🧭 El camino se pide **una sola vez** al servidor gratuito. Si no responde, usa líneas rectas sin reintentar.
+- ➡️ Flechas sobre el camino; el tramo hacia la siguiente parada va resaltado y es la única línea GPS visible.
+- 📟 Indicador con parada, distancia, precisión del GPS y flecha hacia la parada. Botones: **Visitado, Saltar, Seguirme, Terminar**.
+- 📍 **Aviso de llegada** (5 m, configurable): al tocarlo copia la ubicación y marca visitado. Nunca se marca solo.
+- 🔋 Sin pausa por inactividad y con la pantalla encendida mientras dura la ruta (requiere https).
+
+**Progreso guardado**
+- 💾 Si la página se cierra, vuelven solos la lista, los visitados, las rutas y la ruta en curso. Antes de cerrar con una ruta iniciada, el navegador pregunta.
+- 📂 El mismo CSV conserva los visitados; uno distinto empieza de cero.
+- ♻️ Botón **Reiniciar visitados**.
+
+---
+
+## V1.17 — Ficha completa del cliente en Google Sheets
+
+**Archivos:** `index_V1.17.html` + `Codigo.gs` V1.17 (publicar como "Nueva versión"; la URL no cambia)
+
+- 🪪 La búsqueda en el Sheet muestra la **ficha completa** del cliente con los encabezados de la hoja (nombre, dirección, teléfono, plan, etc.), además de la fila, el código y el GPS actual de AA.
+- 🔎 Por nombre muestra coincidencias parciales o la más parecida si no hay una exacta.
+- 🔢 Al conectar, compara la versión de la página con la del `Codigo.gs` publicado y avisa si no coinciden.
+
+---
+
 ## V1.16 — Serpentina + Google Sheets (versión unificada)
 
 **Archivos:** `index_V1.16.html` + `Codigo.gs` (**nuevo**: hay que actualizarlo y publicar "Nueva versión"; la URL no cambia)
