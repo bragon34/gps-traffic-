@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<!-- GPS Track · versión V1.17 (funciona con Codigo.gs V1.17) -->
+<!-- GPS Track · versión V1.18 (funciona con Codigo.gs V1.17: no hubo cambios en el Apps Script) -->
 <title>Clientes + Mi ubicación GPS</title>
 
 <!-- Leaflet -->
@@ -383,9 +383,22 @@
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
     }
 
+    /* Visitado: relleno oscuro del color de su ruta (el fondo y el texto
+       se ponen en línea desde el código para que contrasten con cada ruta). */
     .num-icon.visitado div {
         background: #dcfce7;
-        opacity: 0.7;
+        opacity: 0.95;
+    }
+
+    /* Pin rojo de cliente visitado (sin rutas). */
+    .pin-visitado {
+        background: none;
+        border: none;
+    }
+
+    .pin-visitado svg {
+        display: block;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
     }
 
     .grupo-ruta {
@@ -911,6 +924,156 @@
         width: auto !important;
     }
 
+    /* ---------- Navegación de ruta (tipo Google Maps) ---------- */
+
+    .nav-banner {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+        z-index: 1000;
+        max-width: 560px;
+        margin: 0 auto;
+        display: grid;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 16px;
+        border-top: 6px solid var(--c, #4f46e5);
+        background: #0f172a;
+        color: white;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        font-size: 14px;
+    }
+
+    .nav-banner[hidden] {
+        display: none;
+    }
+
+    .nav-cab {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-flecha {
+        flex: 0 0 auto;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--c, #4f46e5);
+        display: grid;
+        place-items: center;
+        box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.35);
+    }
+
+    .nav-flecha i {
+        display: block;
+        width: 0;
+        height: 0;
+        border-top: 11px solid transparent;
+        border-bottom: 11px solid transparent;
+        border-left: 22px solid white;
+        margin-left: 6px;
+        transform-origin: 4px 50%;
+        transition: transform 0.4s;
+    }
+
+    .nav-texto {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .nav-texto small {
+        display: block;
+        color: #cbd5e1;
+        font-size: 12px;
+    }
+
+    .nav-texto b {
+        display: block;
+        font-size: 17px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nav-dist {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .nav-dist small {
+        font-size: 12px;
+        font-weight: normal;
+        color: #94a3b8;
+    }
+
+    .nav-llegada {
+        border: none;
+        border-radius: 12px;
+        padding: 14px 12px;
+        font-size: 16px;
+        font-weight: bold;
+        background: #22c55e;
+        color: #052e16;
+        cursor: pointer;
+        animation: navPulso 1.2s ease-in-out infinite;
+    }
+
+    .nav-llegada[hidden] {
+        display: none;
+    }
+
+    @keyframes navPulso {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+    }
+
+    .nav-botones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .nav-botones button {
+        flex: 1 1 auto;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 8px;
+        font-size: 14px;
+        font-weight: bold;
+        background: rgba(255, 255, 255, 0.14);
+        color: white;
+        cursor: pointer;
+    }
+
+    .nav-botones button.on {
+        background: #4f46e5;
+    }
+
+    .nav-botones button.peligro {
+        background: rgba(220, 38, 38, 0.85);
+    }
+
+    .nav-nota {
+        font-size: 12px;
+        color: #fbbf24;
+    }
+
+    .nav-nota:empty {
+        display: none;
+    }
+
+    .btn-mini.btn-iniciar {
+        background: #059669;
+        color: white;
+    }
+
+    .btn-mini.btn-terminar {
+        background: #dc2626;
+        color: white;
+    }
+
     @media (max-width: 900px) {
         .layout {
             grid-template-columns: 1fr;
@@ -964,7 +1127,7 @@
 
     <div class="header">
 
-        <h1>📍 Clientes + Mi ubicación GPS <small style="font-size:12px; color:#94a3b8; font-weight:normal">V1.17</small></h1>
+        <h1>📍 Clientes + Mi ubicación GPS <small style="font-size:12px; color:#94a3b8; font-weight:normal">V1.18</small></h1>
 
         <p>
             Carga un CSV con columnas <strong>Nombre, lat, lon</strong> (puede tener también una columna
@@ -981,6 +1144,7 @@
             <button class="btn" id="btnSerpentina">🐍 Rutas serpentina</button>
             <button class="btn secondary" id="btnLimpiarRutas">🧹 Quitar rutas</button>
             <button class="btn tracking-on" id="btnToggleGPS">⏸️ Pausar GPS</button>
+            <button class="btn secondary" id="btnReiniciarProgreso" title="Vuelve a dejar todos los clientes como pendientes">♻️ Reiniciar visitados</button>
             <div class="search-box">
                 <input type="text" id="buscador" placeholder="🔎 Buscar cliente por nombre o #ID...">
             </div>
@@ -997,6 +1161,10 @@
             </label>
             <label>
                 <input type="checkbox" id="serpDesdeGPS" checked> Empezar desde mi ubicación
+            </label>
+            <label title="Al iniciar una ruta, cuando estés a esta distancia (o menos) de la siguiente parada aparece el aviso para marcarla.">
+                Aviso de llegada
+                <input type="number" id="radioLlegada" value="5" min="1" max="200" step="1"> m
             </label>
             <label title="Define por dónde se trazan las rutas en 'Seguir calles', 'Ruta óptima' y Google Maps.">
                 Recorrido
@@ -1306,6 +1474,69 @@
         shadowSize: [41, 41]
     });
 
+    // V1.18: pin ROJO para clientes visitados (misma forma y tamaño que el azul).
+    // Se dibuja con SVG dentro de la página: no depende de imágenes externas.
+    const clienteIconVisitado = L.divIcon({
+        className: "pin-visitado",
+        html: `<svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.5 1C6.15 1 1 6.15 1 12.5c0 8.6 11.5 27.3 11.5 27.3S24 21.1 24 12.5C24 6.15 18.85 1 12.5 1z"
+                      fill="#dc2626" stroke="#7f1d1d" stroke-width="1.2"/>
+                <circle cx="12.5" cy="12.5" r="4.6" fill="#ffffff"/>
+               </svg>`,
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34]
+    });
+
+    // Icono que le corresponde a un cliente según su estado.
+    //  - en una ruta (serpentina / trazo): círculo numerado del color de la ruta
+    //  - visitado: pin rojo · pendiente: pin azul
+    function iconoCliente(c) {
+        if (c.rutaSerp) return iconoParada(c);
+        return c.visitado ? clienteIconVisitado : clienteIcon;
+    }
+
+    // ---------- Colores con contraste (paradas visitadas por ruta) ----------
+
+    function hexARgb(hex) {
+        let h = String(hex || "#475569").replace("#", "");
+        if (h.length === 3) h = h.split("").map(x => x + x).join("");
+        const n = parseInt(h, 16) || 0;
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function oscurecerColor(hex, factor) {
+        return hexARgb(hex).map(v => Math.round(v * factor));
+    }
+
+    // Negro o blanco, el que mejor se lea sobre el color dado.
+    function textoContraste(rgb) {
+        const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+        const lum = 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2]);
+        return lum > 0.35 ? "#111827" : "#ffffff";
+    }
+
+    // ---------- Estado de la navegación de ruta (V1.18) ----------
+
+    const nav = {
+        activa: false,
+        ruta: null,          // ruta serpentina que se está recorriendo
+        paradas: [],         // uids de las paradas pendientes al iniciar (orden del camino)
+        saltados: new Set(), // paradas que el usuario saltó en esta vuelta
+        siguiente: null,     // cliente al que se va ahora
+        camino: null,        // [[lat, lon], ...] calculado UNA vez al iniciar
+        cortes: null,        // índice en "camino" de cada parada (0 = inicio)
+        porCalles: false,    // false = líneas rectas (el servidor no respondió)
+        seguir: true,        // el mapa sigue tu posición
+        avisado: null,       // uid al que ya se le vibró el aviso de llegada
+        cargando: false,
+        wakeLock: null,
+        capa: null
+    };
+
+    // Precisión de la última lectura GPS (m).
+    let ultimaPrecision = null;
+
     // ==========================================================
     // PARSER DE CSV (soporta comillas, comas dentro de comillas)
     // ==========================================================
@@ -1492,6 +1723,9 @@
         }
 
         totalClientesElement.textContent = clientes.length;
+
+        // V1.18: recuperar los visitados guardados (si es la misma lista).
+        aplicarProgresoGuardado();
 
         const validos = clientes.filter(c => c.valido).length;
 
@@ -1756,7 +1990,7 @@
         const lector = new FileReader();
 
         lector.onload = (e) => {
-            procesarCSV(e.target.result);
+            cargarCSVNuevo(e.target.result);
         };
 
         lector.onerror = () => {
@@ -2000,6 +2234,14 @@
 
             c.distancia = calcularDistanciaMetros(userLat, userLon, c.lat, c.lon);
 
+            // V1.18: sin línea hacia los visitados, los de rutas ocultas y,
+            // mientras navegas, todos menos la siguiente parada.
+            if (!lineaDebeVerse(c)) {
+                if (c.linea && map.hasLayer(c.linea)) map.removeLayer(c.linea);
+                refrescarPopupCliente(c);
+                return;
+            }
+
             const latlngs = [[userLat, userLon], [c.lat, c.lon]];
 
             if (!c.linea) {
@@ -2013,19 +2255,78 @@
 
             } else {
                 c.linea.setLatLngs(latlngs);
+                if (!map.hasLayer(c.linea)) c.linea.addTo(map);
             }
 
             // Con rutas serpentina visibles, las líneas hacia cada cliente
-            // se atenúan para que no tapen el recorrido.
-            c.linea.setStyle({ opacity: serp.activa ? 0.12 : 0.6 });
-
-            // Si el cliente pertenece a una ruta oculta, su línea tampoco se muestra.
-            if (c.rutaSerp && c.rutaSerp.visible === false && map.hasLayer(c.linea)) {
-                map.removeLayer(c.linea);
-            }
+            // se atenúan para que no tapen el recorrido. Navegando, la única
+            // línea que queda (hacia la siguiente parada) se resalta.
+            c.linea.setStyle(nav.activa
+                ? { opacity: 0.95, weight: 3, color: nav.ruta ? nav.ruta.color : LINE_COLOR }
+                : { opacity: serp.activa ? 0.12 : 0.6, weight: 2, color: LINE_COLOR });
 
             refrescarPopupCliente(c);
         });
+    }
+
+    // ¿Debe verse la línea punteada desde tu GPS hasta este cliente?
+    function lineaDebeVerse(c) {
+        if (!c.valido || c.visitado) return false;
+        if (c.rutaSerp && c.rutaSerp.visible === false) return false;
+        if (nav.activa && c !== nav.siguiente) return false;
+        return true;
+    }
+
+    // Pone o quita la línea de un cliente según lineaDebeVerse (sin recalcularla).
+    function sincronizarLinea(c) {
+        if (!c.linea) return;
+        const ver = lineaDebeVerse(c);
+        if (ver && !map.hasLayer(c.linea)) c.linea.addTo(map);
+        if (!ver && map.hasLayer(c.linea)) map.removeLayer(c.linea);
+    }
+
+    // ==========================================================
+    // MARCAR / DESMARCAR VISITADO (lista, aviso de llegada y navegación)
+    // ==========================================================
+
+    function marcarVisitado(cliente) {
+
+        if (!cliente || cliente.visitado) return false;
+
+        if (userLat === null || userLon === null) {
+            const seguir = confirm(
+                "No hay señal GPS: no se puede copiar la ubicación.\n\n" +
+                `¿Marcar #${cliente.uid} ${cliente.nombre} como visitado de todos modos?`
+            );
+            if (!seguir) return false;
+        } else {
+            copiarUbicacionActual();
+        }
+
+        cliente.visitado = true;
+        actualizarIconoParada(cliente);
+        sincronizarLinea(cliente);
+        guardarProgreso();
+
+        renderizarListaClientes();
+        if (serp.activa) renderizarResumenRutas();
+        if (nav.activa) navActualizar();
+        return true;
+    }
+
+    function desmarcarVisitado(cliente) {
+
+        if (!cliente || !cliente.visitado) return;
+
+        cliente.visitado = false;
+        actualizarIconoParada(cliente);
+        guardarProgreso();
+
+        if (nav.activa) navActualizar();
+        actualizarDistanciasYLineas();
+        sincronizarLinea(cliente);
+        renderizarListaClientes();
+        if (serp.activa) renderizarResumenRutas();
     }
 
     // ==========================================================
@@ -2171,17 +2472,11 @@
                 if (!cliente) return;
 
                 if (accion === "visitar") {
-                    copiarUbicacionActual();
-                    cliente.visitado = true;
-                    actualizarIconoParada(cliente);
-                    renderizarListaClientes();
-                    if (serp.activa) renderizarResumenRutas();
-                    enfocarSiguientePendiente(cliente.rutaSerp);
+                    const ruta = cliente.rutaSerp;
+                    // Navegando, el mapa ya sigue tu posición y la siguiente parada.
+                    if (marcarVisitado(cliente) && !nav.activa) enfocarSiguientePendiente(ruta);
                 } else if (accion === "deshacer") {
-                    cliente.visitado = false;
-                    actualizarIconoParada(cliente);
-                    renderizarListaClientes();
-                    if (serp.activa) renderizarResumenRutas();
+                    desmarcarVisitado(cliente);
                 }
             });
         });
@@ -2652,6 +2947,7 @@
         renderizarResumenRutas();
         actualizarDistanciasYLineas();
         renderizarListaClientes();
+        guardarRutas();
     }
 
     function generarRutasSerpentina() {
@@ -2753,17 +3049,28 @@
 
     function iconoParada(c) {
 
+        const color = c.rutaSerp.color;
+        let estilo = `--c:${color}`;
+
+        // V1.18: visitado = relleno oscuro del color de SU ruta, con el número
+        // en blanco o negro según lo que más contraste (cada ruta conserva su color).
+        if (c.visitado) {
+            const fondo = oscurecerColor(color, 0.62);
+            estilo += `;background:rgb(${fondo.join(",")});color:${textoContraste(fondo)}`;
+        }
+
         return L.divIcon({
             className: "num-icon" + (c.visitado ? " visitado" : ""),
-            html: `<div style="--c:${c.rutaSerp.color}">${c.paradaSerp}</div>`,
+            html: `<div style="${estilo}">${c.visitado ? "✓" : ""}${c.paradaSerp}</div>`,
             iconSize: [24, 24],
             iconAnchor: [12, 12],
             popupAnchor: [0, -12]
         });
     }
 
+    // V1.18: actualiza el icono de cualquier cliente (con o sin ruta).
     function actualizarIconoParada(c) {
-        if (c.rutaSerp && c.marker) c.marker.setIcon(iconoParada(c));
+        if (c.marker) c.marker.setIcon(iconoCliente(c));
     }
 
     function dibujarFlechas(latlngs, color, capa) {
@@ -2871,6 +3178,11 @@
                     ${r.tipo === "trazo" ? "" : `<button class="btn-mini btn-visitar" data-ruta="${i}" data-accion="calles">🛣️ Trazar recorrido</button>`}
                     ${r.tipo === "sin" ? `<button class="btn-mini btn-visitar" data-ruta="${i}" data-accion="auto">🐍 Serpentina para estos</button>` : ""}
                     <button class="btn-mini btn-deshacer" data-ruta="${i}" data-accion="maps">🧭 Google Maps</button>
+                    ${nav.activa && nav.ruta === r
+                        ? `<button class="btn-mini btn-terminar" data-ruta="${i}" data-accion="terminar">⏹ Terminar ruta</button>`
+                        : r.clientes.some(c => !c.visitado)
+                            ? `<button class="btn-mini btn-iniciar" data-ruta="${i}" data-accion="iniciar">▶ Iniciar ruta</button>`
+                            : ""}
                 </div>
             </div>
         `).join("");
@@ -2897,6 +3209,11 @@
                     organizarSinTrazoAutomatico(r);
                 } else if (accion === "maps") {
                     abrirEnGoogleMaps(r);
+                } else if (accion === "iniciar") {
+                    iniciarNavegacion(indice);
+                } else if (accion === "terminar") {
+                    terminarNavegacion(false);
+                    renderizarResumenRutas();
                 }
             });
         });
@@ -3010,20 +3327,22 @@
         }
 
         r.clientes.forEach(c => {
-            [c.marker, c.linea].forEach(capa => {
-                if (!capa) return;
+            if (c.marker) {
                 if (r.visible) {
-                    if (!map.hasLayer(capa)) capa.addTo(map);
-                } else if (map.hasLayer(capa)) {
-                    map.removeLayer(capa);
+                    if (!map.hasLayer(c.marker)) c.marker.addTo(map);
+                } else if (map.hasLayer(c.marker)) {
+                    map.removeLayer(c.marker);
                 }
-            });
+            }
+            // V1.18: la línea vuelve solo si el cliente sigue pendiente.
+            sincronizarLinea(c);
         });
     }
 
     function refrescarVistaRutas() {
         renderizarResumenRutas();
         renderizarListaClientes();
+        guardarRutas();
     }
 
     function cambiarVisibilidadRuta(indice, visible) {
@@ -3200,22 +3519,27 @@
 
     function limpiarRutasSerpentina(avisar) {
 
+        // V1.18: quitar las rutas termina la navegación en curso.
+        if (nav.activa) terminarNavegacion(false);
+
         serp.capas.clearLayers();
 
         clientes.forEach(c => {
             if (c.rutaSerp) {
                 if (c.marker && !map.hasLayer(c.marker)) c.marker.addTo(map);
-                if (c.linea && !map.hasLayer(c.linea)) c.linea.addTo(map);
                 c.rutaSerp = null;
                 c.paradaSerp = null;
                 c.ordenRuta = null;
-                if (c.marker) c.marker.setIcon(clienteIcon);
+                // V1.18: el visitado conserva su pin rojo y no recupera su línea.
+                if (c.marker) c.marker.setIcon(iconoCliente(c));
+                sincronizarLinea(c);
             }
         });
 
         serp.rutas = [];
         serp.activa = false;
         serp.modo = null;
+        guardarRutas();
 
         // Sin rutas por trazo, los trazos vuelven a verse solos.
         if (!map.hasLayer(capaTrazos)) capaTrazos.addTo(map);
@@ -4202,6 +4526,7 @@
 
         userLat = latitude;
         userLon = longitude;
+        ultimaPrecision = accuracy;
 
         // ======================================================
         // DETECCIÓN DE MOVIMIENTO REAL (para ahorro de batería)
@@ -4307,6 +4632,9 @@
 
         actualizarDistanciasYLineas();
         renderizarListaClientes();
+
+        // V1.18: guía de la ruta iniciada (distancia, flecha, aviso de llegada).
+        if (nav.activa) navActualizar();
     }
 
     // ==========================================================
@@ -4444,6 +4772,13 @@
     function revisarInactividad() {
 
         if (!seguimientoActivo) return;
+
+        // V1.18: con una ruta iniciada no hay pausa por inactividad
+        // (puedes demorarte en una casa sin que se apague el GPS).
+        if (nav.activa) {
+            ultimoMovimientoTS = Date.now();
+            return;
+        }
 
         const tiempoSinMovimiento = Date.now() - ultimoMovimientoTS;
 
@@ -5040,6 +5375,671 @@
     if (credSheet.url && credSheet.clave) {
         conectarSheet(null);
     }
+
+    // ==========================================================
+    // V1.18 · PROGRESO GUARDADO EN EL CELULAR
+    // ==========================================================
+    //
+    // Si la página se cierra o se recarga por accidente, al abrirla de nuevo
+    // vuelven solos: la última lista de clientes (CSV), los visitados, las
+    // rutas serpentina / por trazo y la ruta que estabas recorriendo.
+    //
+    // - Cargar el MISMO CSV conserva los visitados; un CSV distinto empieza de cero.
+    // - "♻️ Reiniciar visitados" deja todo pendiente otra vez.
+
+    const CLAVE_CSV = "gpsTrack.v118.csv";
+    const CLAVE_PROGRESO = "gpsTrack.v118.visitados";
+    const CLAVE_RUTAS = "gpsTrack.v118.rutas";
+    const CLAVE_NAV = "gpsTrack.v118.navegacion";
+    const CLAVE_RADIO = "gpsTrack.v118.radioLlegada";
+
+    // Mientras se restaura la sesión no se sobrescribe lo guardado.
+    let restaurando = false;
+    let avisoAlmacenamiento = false;
+
+    function leerJSON118(clave) {
+        try { return JSON.parse(localStorage.getItem(clave) || "null"); } catch (e) { return null; }
+    }
+
+    function guardarJSON118(clave, valor) {
+        try {
+            if (valor === null) localStorage.removeItem(clave);
+            else localStorage.setItem(clave, JSON.stringify(valor));
+            return true;
+        } catch (e) {
+            if (!avisoAlmacenamiento) {
+                avisoAlmacenamiento = true;
+                statusElement.textContent = "⚠️ El celular no dejó guardar el progreso (sin espacio o modo incógnito). Si cierras la página se perderá.";
+                statusElement.className = "status warning";
+            }
+            return false;
+        }
+    }
+
+    function guardarProgreso() {
+        if (restaurando) return;
+        guardarJSON118(CLAVE_PROGRESO, { visitados: clientes.filter(c => c.visitado).map(c => c.uid) });
+    }
+
+    function aplicarProgresoGuardado() {
+        const p = leerJSON118(CLAVE_PROGRESO);
+        if (!p || !Array.isArray(p.visitados)) return;
+        const set = new Set(p.visitados);
+        clientes.forEach(c => {
+            if (set.has(c.uid) && c.valido) {
+                c.visitado = true;
+                if (c.marker) c.marker.setIcon(iconoCliente(c));
+            }
+        });
+    }
+
+    function guardarRutas() {
+        if (restaurando) return;
+        if (!serp.activa || !serp.rutas.length) {
+            guardarJSON118(CLAVE_RUTAS, null);
+            return;
+        }
+        guardarJSON118(CLAVE_RUTAS, {
+            modo: serp.modo,
+            tolTrazo: serp.tolTrazo,
+            rutas: serp.rutas.map(r => ({
+                tipo: r.tipo,
+                trazoId: r.trazo ? r.trazo.id : null,
+                franjas: r.franjas || 0,
+                uids: r.clientes.map(c => c.uid),
+                visible: r.visible !== false
+            }))
+        });
+    }
+
+    function restaurarRutas() {
+
+        const g = leerJSON118(CLAVE_RUTAS);
+        if (!g || !Array.isArray(g.rutas) || !g.rutas.length) return false;
+
+        const porUid = new Map(clientes.filter(c => c.valido).map(c => [c.uid, c]));
+        const brutas = [];
+
+        g.rutas.forEach(r => {
+            const puntos = (r.uids || []).map(u => porUid.get(u)).filter(Boolean).map(c => ({ cliente: c }));
+            if (!puntos.length) return;
+            let trazo = null;
+            if (r.tipo === "trazo") {
+                trazo = trazos.find(t => t.id === r.trazoId);
+                if (!trazo) return;   // el trazo ya no existe: esa ruta no se puede rearmar
+            }
+            brutas.push({ tipo: r.tipo, trazo, franjas: r.franjas, puntos, _visible: r.visible });
+        });
+
+        if (!brutas.length) return false;
+
+        if (g.tolTrazo) serp.tolTrazo = g.tolTrazo;
+        finalizarRutas(brutas, g.modo || "serpentina", false);
+
+        serp.rutas.forEach(r => {
+            if (r._visible === false) {
+                r.visible = false;
+                aplicarVisibilidadRuta(r);
+            }
+        });
+        renderizarResumenRutas();
+        renderizarListaClientes();
+        return true;
+    }
+
+    function guardarNav() {
+        if (restaurando) return;
+        if (!nav.activa || !nav.ruta) {
+            guardarJSON118(CLAVE_NAV, null);
+            return;
+        }
+        guardarJSON118(CLAVE_NAV, {
+            ruta: serp.rutas.indexOf(nav.ruta),
+            uidsRuta: nav.ruta.clientes.map(c => c.uid),
+            paradas: nav.paradas,
+            saltados: [...nav.saltados],
+            camino: nav.camino,
+            cortes: nav.cortes,
+            porCalles: nav.porCalles
+        });
+    }
+
+    function restaurarNav() {
+
+        const g = leerJSON118(CLAVE_NAV);
+        if (!g) return false;
+
+        const r = serp.rutas[g.ruta];
+        const igual = r && Array.isArray(g.uidsRuta) &&
+            g.uidsRuta.length === r.clientes.length &&
+            g.uidsRuta.every((u, i) => r.clientes[i].uid === u);
+
+        if (!igual || !r.clientes.some(c => !c.visitado)) {
+            guardarJSON118(CLAVE_NAV, null);
+            return false;
+        }
+
+        nav.ruta = r;
+        nav.paradas = g.paradas || [];
+        nav.saltados = new Set(g.saltados || []);
+        nav.camino = g.camino || null;
+        nav.cortes = g.cortes || null;
+        nav.porCalles = !!g.porCalles;
+        abrirNavegacion();
+        $navNota.textContent = nav.porCalles ? "" : "Camino en líneas rectas (el servidor de rutas no respondió al iniciar).";
+        return true;
+    }
+
+    // Carga de un CSV elegido por el usuario.
+    function cargarCSVNuevo(texto) {
+
+        let anterior = null;
+        try { anterior = localStorage.getItem(CLAVE_CSV); } catch (e) { anterior = null; }
+
+        // Una lista distinta empieza de cero (visitados, rutas y navegación).
+        if (anterior !== texto) {
+            guardarJSON118(CLAVE_PROGRESO, null);
+            guardarJSON118(CLAVE_RUTAS, null);
+            guardarJSON118(CLAVE_NAV, null);
+        }
+
+        procesarCSV(texto);
+
+        if (clientes.length) {
+            try {
+                localStorage.setItem(CLAVE_CSV, texto);
+            } catch (e) {
+                statusElement.textContent += " ⚠️ La lista es muy grande para guardarla en el celular: si cierras la página tendrás que cargarla de nuevo.";
+                statusElement.className = "status warning";
+            }
+            if (anterior === texto && clientes.some(c => c.visitado)) {
+                statusElement.textContent += ` ♻️ Es la misma lista: se conservaron ${clientes.filter(c => c.visitado).length} visitado(s).`;
+            }
+        }
+    }
+
+    document.getElementById("btnReiniciarProgreso").addEventListener("click", () => {
+
+        const n = clientes.filter(c => c.visitado).length;
+        if (!n) {
+            statusElement.textContent = "No hay clientes visitados.";
+            statusElement.className = "status";
+            return;
+        }
+        if (!confirm(`¿Dejar los ${n} clientes visitados como pendientes otra vez?`)) return;
+
+        if (nav.activa) terminarNavegacion(false);
+
+        clientes.forEach(c => {
+            if (!c.visitado) return;
+            c.visitado = false;
+            actualizarIconoParada(c);
+        });
+
+        guardarProgreso();
+        actualizarDistanciasYLineas();
+        clientes.forEach(sincronizarLinea);
+        renderizarListaClientes();
+        if (serp.activa) renderizarResumenRutas();
+
+        statusElement.textContent = `♻️ ${n} cliente(s) vuelven a estar pendientes.`;
+        statusElement.className = "status success";
+    });
+
+    // ---------- Radio del aviso de llegada (configurable) ----------
+
+    const inputRadioLlegada = document.getElementById("radioLlegada");
+
+    try {
+        const r = parseFloat(localStorage.getItem(CLAVE_RADIO));
+        if (r > 0) inputRadioLlegada.value = r;
+    } catch (e) { /* sin almacenamiento */ }
+
+    function radioLlegada() {
+        return Math.min(200, Math.max(1, parseFloat(inputRadioLlegada.value) || 5));
+    }
+
+    inputRadioLlegada.addEventListener("change", () => {
+        inputRadioLlegada.value = radioLlegada();
+        try { localStorage.setItem(CLAVE_RADIO, String(radioLlegada())); } catch (e) { /* sin almacenamiento */ }
+        if (nav.activa) navActualizar();
+    });
+
+    // ==========================================================
+    // V1.18 · NAVEGACIÓN DE RUTA (tipo Google Maps)
+    // ==========================================================
+    //
+    // "▶ Iniciar ruta" en una ruta serpentina / por trazo:
+    //  - El camino se pide UNA sola vez al servidor gratuito (a pie o en carro,
+    //    según "Recorrido"), desde tu GPS pasando por las paradas pendientes en
+    //    orden. No se recalcula por tiempo ni por desvíos. Si el servidor no
+    //    responde, no se insiste: se usan líneas rectas.
+    //  - El tramo hacia la siguiente parada se resalta con flechas.
+    //  - Al acercarte a la parada (radio "Aviso de llegada") aparece un aviso.
+    //    Tú decides: al tocarlo se copia la ubicación y se marca visitado.
+    //  - Mientras dura no hay pausa por inactividad y la pantalla no se apaga.
+
+    nav.capa = L.layerGroup();
+
+    const navBanner = L.DomUtil.create("div", "nav-banner", map.getContainer());
+    navBanner.hidden = true;
+    L.DomEvent.disableClickPropagation(navBanner);
+    L.DomEvent.disableScrollPropagation(navBanner);
+
+    navBanner.innerHTML = `
+        <div class="nav-cab">
+            <div class="nav-flecha" title="Dirección hacia la siguiente parada"><i id="navFlecha"></i></div>
+            <div class="nav-texto">
+                <small id="navRuta"></small>
+                <b id="navCliente"></b>
+                <div class="nav-dist" id="navDist"></div>
+            </div>
+        </div>
+        <button type="button" class="nav-llegada" id="navLlegada" hidden></button>
+        <div class="nav-botones">
+            <button type="button" data-nav="marcar">✅ Visitado</button>
+            <button type="button" data-nav="saltar">⏭ Saltar</button>
+            <button type="button" data-nav="centrar" class="on">🎯 Seguirme</button>
+            <button type="button" data-nav="terminar" class="peligro">⏹ Terminar</button>
+        </div>
+        <div class="nav-nota" id="navNota"></div>
+    `;
+
+    const $navFlecha = navBanner.querySelector("#navFlecha");
+    const $navRuta = navBanner.querySelector("#navRuta");
+    const $navCliente = navBanner.querySelector("#navCliente");
+    const $navDist = navBanner.querySelector("#navDist");
+    const $navLlegada = navBanner.querySelector("#navLlegada");
+    const $navNota = navBanner.querySelector("#navNota");
+    const $navCentrar = navBanner.querySelector('[data-nav="centrar"]');
+
+    // Tocar el aviso = gesto del usuario: el navegador SÍ permite copiar al portapapeles.
+    $navLlegada.addEventListener("click", () => {
+        if (nav.siguiente) marcarVisitado(nav.siguiente);
+    });
+
+    navBanner.querySelectorAll("[data-nav]").forEach(b => b.addEventListener("click", () => {
+        const accion = b.getAttribute("data-nav");
+        if (accion === "marcar") {
+            if (nav.siguiente) marcarVisitado(nav.siguiente);
+        } else if (accion === "saltar") {
+            if (!nav.siguiente) return;
+            nav.saltados.add(nav.siguiente.uid);
+            navActualizar();
+            guardarNav();
+        } else if (accion === "centrar") {
+            nav.seguir = true;
+            $navCentrar.classList.add("on");
+            if (userLat !== null) map.setView([userLat, userLon], Math.max(map.getZoom(), 18));
+        } else if (accion === "terminar") {
+            if (!confirm("¿Terminar la ruta? Los visitados se conservan.")) return;
+            terminarNavegacion(false);
+            if (serp.activa) renderizarResumenRutas();
+        }
+    }));
+
+    // Si mueves el mapa con el dedo, deja de seguirte hasta que toques 🎯.
+    map.on("dragstart", () => {
+        if (!nav.activa) return;
+        nav.seguir = false;
+        $navCentrar.classList.remove("on");
+    });
+
+    // Siguiente parada: la primera pendiente (en el orden de la ruta) que no se saltó.
+    function navCalcularSiguiente() {
+        const pendientes = nav.ruta.clientes.filter(c => c.valido && !c.visitado);
+        if (!pendientes.length) return null;
+        let sig = pendientes.find(c => !nav.saltados.has(c.uid));
+        if (!sig) {               // ya se saltaron todas: se vuelve a la primera saltada
+            nav.saltados.clear();
+            sig = pendientes[0];
+        }
+        return sig;
+    }
+
+    function rumboPantalla(a, b) {
+        const pa = map.project(a, 18), pb = map.project(b, 18);
+        return Math.atan2(pb.y - pa.y, pb.x - pa.x) * 180 / Math.PI;
+    }
+
+    // Flechas repartidas a lo largo de un camino (cada "paso" metros).
+    function flechasCada(latlngs, color, capa, paso) {
+
+        let resto = paso / 2;
+        let n = 0;
+
+        for (let i = 1; i < latlngs.length && n < 600; i++) {
+
+            const a = latlngs[i - 1], b = latlngs[i];
+            const d = calcularDistanciaMetros(a[0], a[1], b[0], b[1]);
+            if (d <= 0) continue;
+
+            const ang = rumboPantalla(a, b);
+            let pos = resto;
+
+            while (pos <= d && n < 600) {
+                const t = pos / d;
+                L.marker([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t], {
+                    interactive: false,
+                    keyboard: false,
+                    icon: L.divIcon({
+                        className: "flecha-icon",
+                        html: `<div style="--c:${color};transform:rotate(${ang}deg)"></div>`,
+                        iconSize: [11, 12],
+                        iconAnchor: [5.5, 6]
+                    })
+                }).addTo(capa);
+                n++;
+                pos += paso;
+            }
+
+            resto = pos - d;
+        }
+    }
+
+    // Dibuja el camino completo (tenue) y resalta el tramo hacia la siguiente parada.
+    function pintarCaminoNav() {
+
+        nav.capa.clearLayers();
+        if (!nav.camino || nav.camino.length < 2) return;
+
+        const color = nav.ruta.color;
+
+        L.polyline(nav.camino, { color, weight: 4, opacity: 0.35, interactive: false }).addTo(nav.capa);
+        flechasCada(nav.camino, color, nav.capa, 90);
+
+        const j = nav.siguiente ? nav.paradas.indexOf(nav.siguiente.uid) : -1;
+        if (j < 0 || !nav.cortes || nav.cortes[j + 1] === undefined) return;
+
+        const tramo = nav.camino.slice(nav.cortes[j], nav.cortes[j + 1] + 1);
+        if (tramo.length < 2) return;
+
+        L.polyline(tramo, { color: "#ffffff", weight: 11, opacity: 0.95, interactive: false }).addTo(nav.capa);
+        L.polyline(tramo, { color, weight: 7, opacity: 1, interactive: false }).addTo(nav.capa);
+        flechasCada(tramo, "#ffffff", nav.capa, 30);
+    }
+
+    // Pide el camino UNA vez (por tramos de 50 puntos, como "Trazar recorrido").
+    // Sin reintentos: si algo falla se usan líneas rectas.
+    async function calcularCaminoNav(inicio, paradas) {
+
+        const puntos = [[inicio.lon, inicio.lat], ...paradas.map(c => [c.lon, c.lat])];
+        const rectas = () => ({
+            camino: puntos.map(p => [p[1], p[0]]),
+            cortes: puntos.map((p, i) => i),
+            porCalles: false
+        });
+
+        const TRAMO = 50;
+        const modo = modoRecorrido();
+        let camino = [];
+        const cortes = [0];
+
+        try {
+            for (let s = 0; s < puntos.length - 1; s += TRAMO - 1) {
+
+                const parte = puntos.slice(s, s + TRAMO);
+                const url = modo.base + "/route/v1/driving/" +
+                    parte.map(p => p[0] + "," + p[1]).join(";") +
+                    "?overview=full&geometries=geojson";
+
+                const ctrl = new AbortController();
+                const reloj = setTimeout(() => ctrl.abort(), 20000);
+                const respuesta = await fetch(url, { signal: ctrl.signal });
+                clearTimeout(reloj);
+                const datos = await respuesta.json();
+
+                if (datos.code !== "Ok" || !datos.routes || !datos.routes.length || !datos.waypoints) {
+                    return rectas();
+                }
+
+                const geo = datos.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                const base = camino.length ? camino.length - 1 : 0;
+
+                // Dónde cae cada parada dentro de la geometría (buscando hacia adelante).
+                let desde = 0;
+                datos.waypoints.forEach((wp, k) => {
+                    if (k === 0) return;
+                    const [lon, lat] = wp.location;
+                    let mejor = desde, mejorD = Infinity;
+                    for (let t = desde; t < geo.length; t++) {
+                        const d = (geo[t][0] - lat) ** 2 + (geo[t][1] - lon) ** 2;
+                        if (d < mejorD) { mejorD = d; mejor = t; }
+                    }
+                    desde = mejor;
+                    cortes.push(base + mejor);
+                });
+
+                camino = camino.length ? camino.concat(geo.slice(1)) : geo;
+            }
+        } catch (err) {
+            return rectas();
+        }
+
+        if (cortes.length !== puntos.length) return rectas();
+        return { camino, cortes, porCalles: true };
+    }
+
+    async function iniciarNavegacion(indice) {
+
+        const r = serp.rutas[indice];
+        if (!r || nav.cargando) return;
+
+        const paradas = r.clientes.filter(c => c.valido && !c.visitado);
+
+        if (!paradas.length) {
+            statusElement.textContent = `✅ Todas las paradas de ${r.nombre} están visitadas.`;
+            statusElement.className = "status success";
+            return;
+        }
+
+        if (userLat === null || userLon === null) {
+            if (!seguimientoActivo) reanudarGPS();
+            statusElement.textContent = "📡 Esperando señal GPS para iniciar la ruta. Intenta de nuevo en unos segundos.";
+            statusElement.className = "status warning";
+            return;
+        }
+
+        if (nav.activa) terminarNavegacion(false);
+        if (!r.visible) cambiarVisibilidadRuta(indice, true);
+        if (!seguimientoActivo) reanudarGPS();
+
+        nav.cargando = true;
+        statusElement.textContent = `🧭 Iniciando ${r.nombre}: calculando el camino ${modoRecorrido().texto}...`;
+        statusElement.className = "status";
+
+        const res = await calcularCaminoNav({ lat: userLat, lon: userLon }, paradas);
+        nav.cargando = false;
+
+        nav.ruta = r;
+        nav.paradas = paradas.map(c => c.uid);
+        nav.saltados = new Set();
+        nav.camino = res.camino;
+        nav.cortes = res.cortes;
+        nav.porCalles = res.porCalles;
+
+        abrirNavegacion();
+        cambiarMapaAmpliado(true, false);
+        if (userLat !== null) map.setView([userLat, userLon], Math.max(map.getZoom(), 18));
+
+        $navNota.textContent = res.porCalles ? "" : "Camino en líneas rectas: el servidor de rutas no respondió (no se reintenta).";
+        statusElement.textContent = `🧭 ${r.nombre} iniciada · ${paradas.length} parada(s) · ` +
+            (res.porCalles ? `camino ${modoRecorrido().texto}` : "líneas rectas");
+        statusElement.className = "status success";
+    }
+
+    // Activa el modo navegación con lo que ya está en "nav" (al iniciar o al restaurar).
+    function abrirNavegacion() {
+
+        nav.activa = true;
+        nav.seguir = true;
+        nav.avisado = null;
+        nav.siguiente = null;
+
+        $navCentrar.classList.add("on");
+        navBanner.style.setProperty("--c", nav.ruta.color);
+        navBanner.querySelector(".nav-flecha").style.setProperty("--c", nav.ruta.color);
+        navBanner.hidden = false;
+
+        if (!map.hasLayer(nav.capa)) nav.capa.addTo(map);
+
+        pedirPantallaEncendida();
+        navActualizar();
+        guardarNav();
+        if (serp.activa) renderizarResumenRutas();
+    }
+
+    function terminarNavegacion(completada) {
+
+        const nombre = nav.ruta ? nav.ruta.nombre : "";
+
+        nav.activa = false;
+        nav.ruta = null;
+        nav.siguiente = null;
+        nav.camino = null;
+        nav.cortes = null;
+        nav.paradas = [];
+        nav.saltados = new Set();
+
+        nav.capa.clearLayers();
+        if (map.hasLayer(nav.capa)) map.removeLayer(nav.capa);
+        navBanner.hidden = true;
+        $navLlegada.hidden = true;
+
+        soltarPantallaEncendida();
+        guardarNav();
+
+        // Al terminar se vuelve a ver la lista de clientes.
+        if (mapaAmpliado) cambiarMapaAmpliado(false, false);
+
+        actualizarDistanciasYLineas();
+        clientes.forEach(sincronizarLinea);
+
+        if (completada) {
+            if (navigator.vibrate) navigator.vibrate([300, 120, 300]);
+            // Después del mensaje de "Ubicación copiada" (que llega un instante después).
+            setTimeout(() => {
+                statusElement.textContent = `🏁 ${nombre} completada: todas las paradas visitadas.`;
+                statusElement.className = "status success";
+            }, 400);
+        }
+    }
+
+    // Se llama en cada lectura del GPS y al marcar / saltar paradas.
+    function navActualizar() {
+
+        if (!nav.activa || !nav.ruta) return;
+
+        const sig = navCalcularSiguiente();
+
+        if (!sig) {
+            terminarNavegacion(true);
+            if (serp.activa) renderizarResumenRutas();
+            return;
+        }
+
+        if (sig !== nav.siguiente) {
+            nav.siguiente = sig;
+            nav.avisado = null;
+            pintarCaminoNav();
+            actualizarDistanciasYLineas();
+            clientes.forEach(sincronizarLinea);
+            guardarNav();
+        }
+
+        const pend = nav.ruta.clientes.filter(c => !c.visitado).length;
+        $navRuta.textContent = `${iconoRuta(nav.ruta)} ${nav.ruta.nombre} · Parada ${sig.paradaSerp} de ${nav.ruta.clientes.length} · ${pend} pendiente(s)`;
+        $navCliente.textContent = `#${sig.uid} ${sig.nombre}`;
+
+        if (userLat === null || userLon === null) {
+            $navDist.innerHTML = "📡 Esperando GPS...";
+            $navLlegada.hidden = true;
+            return;
+        }
+
+        const d = calcularDistanciaMetros(userLat, userLon, sig.lat, sig.lon);
+        const prec = ultimaPrecision !== null ? Math.round(ultimaPrecision) : null;
+        $navDist.innerHTML = `${formatearDistancia(d)}${prec !== null ? ` <small>GPS ±${prec} m</small>` : ""}`;
+        $navFlecha.style.transform = `rotate(${rumboPantalla([userLat, userLon], [sig.lat, sig.lon])}deg)`;
+
+        // Aviso de llegada: el GPS del celular suele tener 3–10 m de error, así que
+        // se da hasta 10 m de margen por precisión; si no, con 5 m casi nunca saldría.
+        const margen = Math.min(10, ultimaPrecision || 0);
+        const cerca = d - margen <= radioLlegada();
+
+        $navLlegada.hidden = !cerca;
+        if (cerca) {
+            $navLlegada.textContent = `📍 Llegaste a #${sig.uid} ${sig.nombre} — Toca aquí para marcar visitado y copiar la ubicación`;
+            if (nav.avisado !== sig.uid) {
+                nav.avisado = sig.uid;
+                if (navigator.vibrate) navigator.vibrate([150, 80, 150]);
+            }
+        }
+
+        if (nav.seguir) {
+            map.panTo([userLat, userLon], { animate: true });
+        }
+    }
+
+    // ---------- Pantalla encendida y cierre accidental ----------
+
+    async function pedirPantallaEncendida() {
+        try {
+            if ("wakeLock" in navigator && document.visibilityState === "visible" && !nav.wakeLock) {
+                nav.wakeLock = await navigator.wakeLock.request("screen");
+                nav.wakeLock.addEventListener("release", () => { nav.wakeLock = null; });
+            }
+        } catch (e) { /* no disponible (requiere https) */ }
+    }
+
+    function soltarPantallaEncendida() {
+        try { if (nav.wakeLock) nav.wakeLock.release(); } catch (e) { /* ya liberado */ }
+        nav.wakeLock = null;
+    }
+
+    document.addEventListener("visibilitychange", () => {
+        if (nav.activa && document.visibilityState === "visible") pedirPantallaEncendida();
+    });
+
+    // Con una ruta iniciada el navegador pregunta antes de cerrar o recargar.
+    window.addEventListener("beforeunload", e => {
+        if (!nav.activa) return;
+        e.preventDefault();
+        e.returnValue = "";
+    });
+
+    // ---------- Al abrir la página: recuperar la última sesión ----------
+
+    (function restaurarSesion() {
+
+        let texto = null;
+        try { texto = localStorage.getItem(CLAVE_CSV); } catch (e) { texto = null; }
+        if (!texto) return;
+
+        restaurando = true;
+        let hayRutas = false, hayNav = false;
+
+        try {
+            procesarCSV(texto);
+            hayRutas = restaurarRutas();
+            hayNav = hayRutas && restaurarNav();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            restaurando = false;
+        }
+
+        if (!clientes.length) return;
+
+        const visitados = clientes.filter(c => c.visitado).length;
+        statusElement.textContent =
+            `♻️ Se recuperó tu última lista: ${clientes.filter(c => c.valido).length} clientes · ${visitados} visitado(s)` +
+            (hayRutas ? ` · ${serp.rutas.length} ruta(s)` : "") +
+            (hayNav ? ` · continúas en ${nav.ruta.nombre}` : "") + ".";
+        statusElement.className = "status success";
+
+        if (hayNav) cambiarMapaAmpliado(true, false);
+    })();
 
     // ==========================================================
     // INICIAR AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
